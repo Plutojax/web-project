@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Spare Food Share</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/4.0.0/ekko-lightbox.min.js" integrity="sha512-A91aOxAVV3f8rcTRk/X47XReRLOKD0gfRQVqmSS0M/ExMbdSCh95TPo4sY7thVoJuMCfd/u2+WkhJydNUB3lUQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/19ddb4ff30.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/4.0.0/ekko-lightbox.min.css" integrity="sha512-vC3vvXGPI9bplTilrP7d0YKtmHrMAH4q9dF6QSfIL/uOFIMsHu2wkmAITtFRkNisTKt1e4EAhIiXpyXJgiJW4Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- jQThumb --><!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Spare Food Share</title>
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/4.0.0/ekko-lightbox.min.js" integrity="sha512-A91aOxAVV3f8rcTRk/X47XReRLOKD0gfRQVqmSS0M/ExMbdSCh95TPo4sY7thVoJuMCfd/u2+WkhJydNUB3lUQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <!-- Font Awesome -->
+        <script src="https://kit.fontawesome.com/19ddb4ff30.js" crossorigin="anonymous"></script>
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/4.0.0/ekko-lightbox.min.css" integrity="sha512-vC3vvXGPI9bplTilrP7d0YKtmHrMAH4q9dF6QSfIL/uOFIMsHu2wkmAITtFRkNisTKt1e4EAhIiXpyXJgiJW4Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <!-- jQThumb -->
+        <script type="text/javascript" src="/public/javascripts/jqthumb.js"></script>
+        <script>
+            function DrawImage(hotimg)
+            {
+                $(hotimg).jqthumb({
+                    classname      : 'jqthumb',
+                    width          : '100%', // Width
+                    height         : '500px', // Height
+                    // position       : { y: '50%', x: '50%'}, // Generate thumbnail starting from the center of the image
+                    zoom           : '1', // Zoom ratio
+                    method         : 'auto', // Submission method, for different browser environments, default is 'auto'
+                });
+            }
+
+            function upload() {
+                window.location.href = '/upload';
+            }
+        </script>
+    </head>
+
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light" style='background-color: #c5f1bb;'>
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
+                </li>
+            </ul>
+            <style>
+                .navbar-nav li a {
+                    font-size: 18px; /* replace 16px with the desired font size */
+                }
+            </style>
+            <style>
+                .navbar-brand {
+                    margin-top: 3px; /* replace -10px with the desired margin */
+                }
+            </style>
+            <div class="navbar-collapse justify-content-end">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-success my-3" onclick="upload()">
+                        <i class="fas fa-upload"></i> Upload</button>
+                </div>
+            </div>
+        </div>
+    </header>
+<main>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-4">
+                <div class="card mb-3">
+                    <!--          https://via.placeholder.com/300x200-->
+                    <a href="../<%= sighting.image.replaceAll("\\","/") %>" data-toggle="lightbox">
+                        <img src="../<%= sighting.image.replaceAll("\\","/") %>" class="card-img-top" alt="..." onload="DrawImage(this)">
+                    </a>
+                </div>
+            </div>
+
+
+
+            <div class="col-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Sighting Information</h5>
+                        <hr style="border-top: 1px solid #000; width: 100%;" class="mb-4">
+                        <p class="card-text" id="sighting-name"><strong>Food name:</strong> <%= sighting.Identification %></p>
+                        <label for="sighting-description"><strong>Description:</strong></label>
+                        <textarea class="form-control" id="sighting-description" rows="3"><%= sighting.Description %></textarea>
+                        <p class="card-text" id="Date Seen"><strong>Date Seen:</strong> <%= new Date(sighting.DateSeen).toISOString() %> </p>
+                        <p class="card-text" id="uploaded-by"><strong>Uploaded-by:</strong><%= sighting.username %></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="">
+                <% if (username === sighting.username) { %>
+                    <button type="button" onclick="modifyDescription()" class="btn btn-success btn-block mt-4"><i class="far fa-comment"></i> Modify description</button>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+    async function modifyDescription() {
+        const newDescription = document.getElementById('sighting-description').value;
+        console.log(newDescription);
+        if (newDescription.trim() === '') {
+            alert('Description cannot be empty.');
+            return;
+        }
+
+        try {
+            const response = await axios.post('/updatedDescription', {
+                sightingId: '<%= sighting._id %>',
+                newDescription: newDescription
+            });
+
+            if (response.status === 200) {
+                document.getElementById('sighting-description').value = response.data.updatedDescription;
+                alert('Description updated successfully.');
+            } else {
+                throw new Error('Failed to update description.');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Spare Food Share</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/19ddb4ff30.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <!-- jQThumb -->
+    <script type="text/javascript" src="/public/javascripts/jqthumb.js"></script>
+    <script>
+        function DrawImage(hotimg)
+        {
+            $(hotimg).jqthumb({
+                classname      : 'jqthumb',
+                width          : '100%', // Width
+                height         : '250px', // Height
+                // position       : { y: '50%', x: '50%'}, // Generate thumbnail starting from the center of the image
+                zoom           : '1', // Zoom ratio
+                method         : 'auto', // Submission method, for different browser environments, default is 'auto'
+            });
+        }
+
+        function upload() {
+            window.location.href = '/upload';
+        }
+    </script>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light" style='background-color: #c5f1bb;'>
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
+            </li>
+        </ul>
+        <style>
+            .navbar-nav li a {
+                font-size: 18px; /* replace 16px with the desired font size */
+            }
+        </style>
+        <style>
+            .navbar-brand {
+                margin-top: 3px; /* replace -10px with the desired margin */
+            }
+        </style>
+        <div class="navbar-collapse justify-content-end">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <button type="button" class="btn btn-success my-3" onclick="upload()">
+                    <i class="fas fa-upload"></i> Upload</button>
+            </div>
+        </div>
+    </div>
+</header>
+<main>
+    <div class="container-fluid">
+        <div class="row row-cols-1 row-cols-md-3 g-4" id="container">
+            <script>
+                const container = document.getElementById('container');
+                const sightings = JSON.parse('<%- JSON.stringify(sightings).replaceAll("\\\\","/") %>');
+
+                sightings.forEach(function(sighting) {
+                    const div = document.createElement('div');
+                    div.classList.add('col-2');
+
+                    const div2= document.createElement('div');
+                    div2.classList.add('card', 'p-2', 'mt-4');
+
+                    const img = document.createElement('img');
+                    img.src = sighting.image;
+                    img.onload = function () {
+                        DrawImage(this);
+                    }
+                    img.classList.add('img-thumbnail');
+                    img.alt = '';
+
+                    const caption = document.createElement('div');
+                    caption.classList.add('card-body', 'text-truncate');
+
+                    const title = document.createElement('a');
+                    // title.href = '#';
+                    // title.textContent = food.foodName;
+                    title.href = '/sighting-detail/' + sighting._id; // 修改此处，使其链接到食物详情页面
+                    title.textContent = sighting.Identification;
+
+                    const dateSeen = document.createElement('p');
+                    dateSeen.classList.add('text-truncate');
+                    dateSeen.textContent = 'Date Seen: ' + sighting.DateSeen.split("T")[0];
+
+
+                    caption.appendChild(title);
+                    caption.appendChild(dateSeen);
+
+                    div2.appendChild(img);
+                    div2.appendChild(caption);
+
+                    div.appendChild(div2);
+
+                    container.appendChild(div);
+                });
+            </script>
+
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

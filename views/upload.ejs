@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Sighting</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/4.0.0/ekko-lightbox.min.js" integrity="sha512-A91aOxAVV3f8rcTRk/X47XReRLOKD0gfRQVqmSS0M/ExMbdSCh95TPo4sY7thVoJuMCfd/u2+WkhJydNUB3lUQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/19ddb4ff30.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/4.0.0/ekko-lightbox.min.css" integrity="sha512-vC3vvXGPI9bplTilrP7d0YKtmHrMAH4q9dF6QSfIL/uOFIMsHu2wkmAITtFRkNisTKt1e4EAhIiXpyXJgiJW4Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- jQThumb -->
+    <script type="text/javascript" src="/public/javascripts/jqthumb.js"></script>
+    <script>
+        function DrawImage(hotimg)
+        {
+            $(hotimg).jqthumb({
+                classname      : 'jqthumb',
+                width          : '100%', // Width
+                height         : '250px', // Height
+                // position       : { y: '50%', x: '50%'}, // Generate thumbnail starting from the center of the image
+                zoom           : '1', // Zoom ratio
+                method         : 'auto', // Submission method, for different browser environments, default is 'auto'
+            });
+        }
+    </script>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light" style='background-color: #c5f1bb;'>
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/home">Home</a>
+            </li>
+        </ul>
+        <div class="navbar-collapse">
+            <form class="form-inline">
+            </form>
+        </div>
+        <div class="navbar-collapse justify-content-end">
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <button type="button" class="btn btn-success my-3" disabled>
+                    <i class="fas fa-upload"></i> Upload</button>
+            </div>
+        </div>
+    </div>
+</header>
+<main>
+    <div class="container">
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="image">Upload Image</label>
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="imageInput" name="image" required>
+                                        <label class="custom-file-label" for="imageInput">Choose file</label>
+                                        <script>
+                                            const imageInput = document.getElementById('imageInput');
+                                            const label = document.querySelector('.custom-file-label');
+                                            imageInput.addEventListener('change', function() {
+                                                label.innerHTML = this.files[0].name;
+                                            });
+                                        </script>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <img id="preview" src="https://via.placeholder.com/500x500" class="img-thumbnail" alt="">
+                                    <script>
+                                        function previewImage(input) {
+                                            if (input.files && input.files[0]) {
+                                                const reader = new FileReader();
+                                                reader.onload = function(e) {
+                                                    document.getElementById('preview').setAttribute('src', e.target.result);
+                                                }
+                                                reader.readAsDataURL(input.files[0]);
+                                            }
+                                        }
+                                        const imageInput2 = document.getElementById('imageInput');
+                                        imageInput2.addEventListener('change', function() {
+                                            previewImage(this);
+                                        });
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="foodName">identification</label>
+                                <input type="text" class="form-control" id="identification" name="identification" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="foodIntroduction">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="expiredDate">Date Seen</label>
+                                <input type="datetime-local" class="form-control" id="dateSeen" name="dateSeen" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input class="form-control" id="username" name="username" value=<%=username%> required readonly>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="far fa-save"></i> Upload</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script>
+            const form = document.querySelector('form');
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault(); // Prevent default form submission behavior
+                const formData = new FormData(event.target);
+                const data = Object.fromEntries(formData.entries()); // Convert FormData to JSON object
+                try {
+                    await axios.post('/upload', data); // Send form data to server
+                    window.location.href = '/success'; // Redirect to success page
+                } catch (err) {
+                    console.error(err);
+                    window.location.href = '/error'; // Redirect to error page
+                }
+            });
+        </script>
+    </div>
+</main>
+</body>
+</html>

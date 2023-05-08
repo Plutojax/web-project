@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link href="https://fonts.googleapis.com/css?family=Great+Vibes&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/19ddb4ff30.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: none;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        .container {
+            background-size: cover;
+            background-position: center;
+            height: 500px; /* Or set a specific height for the container */
+        }
+    </style>
+</head>
+<body>
+
+<div class="row justify-content-center mt-3">
+    <div class="col-md-6">
+        <div class="text-center" style="color: #47a058; padding: 10px; font-family: 'Great Vibes', sans-serif;font-size:48px" >
+            Sighting
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5 bg-img d-flex align-items-center justify-content-center">
+    <div class="row flex-grow-1 justify-content-center ">
+        <div class="col-md-6">
+            <div class="card ">
+                <div class="card-header">
+                    <h4 class="text-center mb-0">Log In</h4>
+                </div>
+                <div class="card-body">
+                    <div id="error-container" class="alert alert-danger" role="alert" style="display: none;"></div>
+                    <form id="loginForm" method="post" action="/login">
+                        <div class="form-group">
+                            <label for="usernameOrEmail">Username or Email</label>
+                            <input type="text" class="form-control" id="usernameOrEmail" name="usernameOrEmail" required>
+                            <div class="invalid-feedback error-message"></div>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-block">Log In</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Client-side form validation
+    (function() {
+        'use strict';
+        window.addEventListener(
+            'load',
+            function() {
+                const form = document.getElementById('loginForm');
+                const errorContainer = document.getElementById('error-container');
+                const usernameOrEmailInput = document.getElementById('usernameOrEmail');
+                const passwordInput = document.getElementById('password');
+
+                form.addEventListener(
+                    'submit',
+                    async function(event) {
+                        event.preventDefault(); // Prevent the default form submission
+
+                        if (form.checkValidity() === false) {
+                            event.stopPropagation();
+                        } else {
+                            try {
+                                const response = await fetch('/login', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({
+                                        usernameOrEmail: usernameOrEmailInput.value,
+                                    }),
+                                });
+
+                                if (response.status === 200) {
+                                    window.location.href = '/home'; // Redirect to the homepage on success
+                                } else if (response.status === 500) {
+                                    errorContainer.textContent = 'An error occurred on the server. Please try again later.';
+                                    errorContainer.style.display = 'block';
+                                }
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        }
+                    },
+                    false
+                );
+
+
+
+
+            },
+            false
+        );
+    })();
+</script>
+
+</body>
+</html>
