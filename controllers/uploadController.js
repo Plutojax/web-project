@@ -32,8 +32,13 @@ router.get('/upload', (req, res) => {
 // Handle POST /upload route to process form submission
 router.post('/upload', upload.single('image'), (req, res) => {
     // Get form data from the request
-    const { identification, description, dateSeen,username} = req.body;
+    let { identification, description, dateSeen,username} = req.body;
     const image = req.file.path;
+    // identification can be given later
+    if (identification.toString().trim().length<=0)
+    {
+        identification = "NotGiven"
+    }
     // Create a new food data object
     const sighting = new Sighting({
         image,
