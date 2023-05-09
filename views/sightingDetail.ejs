@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Spare Food Share</title>
+    <title>Bird Sightings</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/4.0.0/ekko-lightbox.min.js" integrity="sha512-A91aOxAVV3f8rcTRk/X47XReRLOKD0gfRQVqmSS0M/ExMbdSCh95TPo4sY7thVoJuMCfd/u2+WkhJydNUB3lUQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -18,7 +18,7 @@
     <html>
     <head>
         <meta charset="utf-8">
-        <title>Spare Food Share</title>
+        <title>Bird Sightings</title>
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/4.0.0/ekko-lightbox.min.js" integrity="sha512-A91aOxAVV3f8rcTRk/X47XReRLOKD0gfRQVqmSS0M/ExMbdSCh95TPo4sY7thVoJuMCfd/u2+WkhJydNUB3lUQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -103,7 +103,7 @@
                     <div class="card-body">
                         <h5 class="card-title text-center">Sighting Information</h5>
                         <hr style="border-top: 1px solid #000; width: 100%;" class="mb-4">
-                        <p class="card-text" id="sighting-name"><strong>Food name:</strong> <%= sighting.Identification %></p>
+                        <p class="card-text" id="sighting-name"><strong>Bird common name/scientific name:</strong> <%= sighting.Identification %></p>
                         <label for="sighting-description"><strong>Description:</strong></label>
                         <textarea class="form-control" id="sighting-description" rows="3"><%= sighting.Description %></textarea>
                         <p class="card-text" id="Date Seen"><strong>Date Seen:</strong> <%= new Date(sighting.DateSeen).toISOString() %> </p>
