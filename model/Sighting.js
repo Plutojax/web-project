@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// 定义食品数据的模式
+// define the sighting data model
 const SightingSchema = new mongoose.Schema({
     image: { type: String, required: true },
     Identification: { type: String, required: true },
@@ -19,8 +19,8 @@ SightingSchema.statics.getSightingById = async function (sightingId) {
 };
 
 
-// 创建食品数据模型
+// create sighting data model
 const Sighting = mongoose.model('sightings', SightingSchema);
 
-// 导出食品数据模型
+// export sighting data model
 module.exports = Sighting;

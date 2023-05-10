@@ -92,14 +92,13 @@
                     caption.classList.add('card-body', 'text-truncate');
 
                     const title = document.createElement('a');
-                    // title.href = '#';
-                    // title.textContent = food.foodName;
-                    title.href = '/sighting-detail/' + sighting._id; // 修改此处，使其链接到食物详情页面
+
+                    title.href = '/sighting-detail/' + sighting._id; // modify here, make it link to detail page
                     title.textContent = sighting.Identification;
 
                     const dateSeen = document.createElement('p');
                     dateSeen.classList.add('text-truncate');
-                    dateSeen.textContent = 'Date Seen: ' + sighting.DateSeen.split("T")[0];
+                    dateSeen.textContent = 'Seen on: ' + sighting.DateSeen.split("T")[0];
 
 
                     caption.appendChild(title);

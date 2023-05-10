@@ -9,9 +9,9 @@ mongoose.connect('mongodb://127.0.0.1:27017/Sighting', {useNewUrlParser: true, u
 mongoose.Promise = global.Promise;
 
 
-// 在这里添加 express.json() 中间件
+// import express.json() middleware
 app.use(express.json());
-// 将 public 文件夹设置为静态文件夹
+// set 'public' as a static folder
 app.use(express.static('public'));
 
 // Set up middleware
