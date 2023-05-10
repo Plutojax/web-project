@@ -39,7 +39,7 @@ router.post('/upload', upload.single('image'), (req, res) => {
     {
         identification = "NotGiven"
     }
-    // Create a new food data object
+    // Create a new sighting data object
     const sighting = new Sighting({
         image,
         Identification: identification,
@@ -48,7 +48,7 @@ router.post('/upload', upload.single('image'), (req, res) => {
         username: username
     });
     console.log(sighting);
-    // Save the new food data object to the database
+    // Save the new sighting data object to the database
     sighting.save()
         .then(() => {
             // Redirect to success page

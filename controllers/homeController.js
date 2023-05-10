@@ -6,7 +6,7 @@ const Sighting = require('../model/Sighting');
 
 router.get('/home', async(req, res) => {
     const coo=req.cookies.username;
-    // Get all food data from the database
+    // Get all sighting data from the database
     Sighting.find({})
         .then((sightings) => {
             res.render('home', { sightings:sightings,username:coo });
