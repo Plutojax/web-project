@@ -3,6 +3,8 @@ const session = require('express-session');
 const app = express();
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const Sighting = require('./model/Sighting');
+
 
 // Connect to the MongoDB database
 mongoose.connect('mongodb://127.0.0.1:27017/Sighting', {useNewUrlParser: true, useUnifiedTopology: true})
@@ -34,6 +36,7 @@ app.use(function(req, res, next) {
 // Set the view engine and views directory
 app.set('view engine', 'ejs');
 app.set('views', './views');
+
 
 // Set up the controllers
 const authController = require('./controllers/authController');
