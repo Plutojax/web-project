@@ -2,6 +2,16 @@ const express = require('express');
 const router = express.Router();
 const Sighting = require('../model/Sighting');
 
+
+router.get('/sighting-location/:sightingId', async (req, res, next) => {
+    // Extract the `sightingId` from the request parameters
+    const sightingId = req.params.sightingId;
+    console.log(sightingId)
+    // Fetch the sighting with the given `sightingId` and send it as the response
+    const sighting = await Sighting.getSightingById(sightingId);
+    res.send(sighting)
+});
+
 router.get('/sighting-detail/:sightingId', async (req, res, next) => {
     try {
         const coo=req.cookies.username;
