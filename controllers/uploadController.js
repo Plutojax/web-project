@@ -32,7 +32,7 @@ router.get('/upload', (req, res) => {
 // Handle POST /upload route to process form submission
 router.post('/upload', upload.single('image'), (req, res) => {
     // Get form data from the request
-    let { identification, description, dateSeen,username} = req.body;
+    let { identification, description, dateSeen,username,location,latitude,longitude} = req.body;
     const image = req.file.path;
     // identification can be given later
     if (identification.toString().trim().length<=0)
@@ -45,7 +45,10 @@ router.post('/upload', upload.single('image'), (req, res) => {
         Identification: identification,
         Description: description,
         DateSeen: dateSeen,
-        username: username
+        username: username,
+        location: location,
+        latitude: latitude,
+        longitude:longitude
     });
     console.log(sighting);
     // Save the new sighting data object to the database

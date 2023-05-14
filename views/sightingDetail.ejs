@@ -198,6 +198,14 @@
             <div class="col-6">
                 <div class="card mb-3">
                     <div class="card-body">
+                        <div style="width: 100%;float: right;padding-right: 5%">
+                            <p> <%-sighting.location%></p>
+                            <div style="height: 200px;width: 100%" id="map"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mb-3">
+                    <div class="card-body">
                         <h5 class="card-title text-center">Sighting Information</h5>
                         <hr style="border-top: 1px solid #000; width: 100%;" class="mb-4">
 
@@ -284,6 +292,11 @@
         </div>
     </div>
 </main>
+    <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB4yedOkmJJv19wwjVf2aRCV-Z2byy4CTk&language=en&callback=initMap&v=weekly&libraries=places"
+            defer
+    ></script>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
 <script>
     async function modifyIdentification() {
         const newIdentification = document.getElementById('sighting-identification').value;
@@ -312,6 +325,33 @@
         }
     }
 </script>
+    <script>
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:3000/sighting-location/'+<%-JSON.stringify(sighting)%>._id,
+            success(res){
+                console.log(res)
+                window.initMap(res.longitude,res.latitude)
+            },
+            error(error){
+                alert('error:'+error)
+            }
+        })
+        function initMap(longitude, latitude) {
+            // The location of Uluru
+            const uluru = { lat: latitude, lng: longitude };
+            // The map, centered at Uluru
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 12,
+                center: uluru,
+            });
+            // The marker, positioned at Uluru
+            const marker = new google.maps.Marker({
+                position: uluru,
+                map: map,
+            });
+        }
 
+    </script>
 </body>
 </html>

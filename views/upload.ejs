@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/4.0.0/ekko-lightbox.min.css" integrity="sha512-vC3vvXGPI9bplTilrP7d0YKtmHrMAH4q9dF6QSfIL/uOFIMsHu2wkmAITtFRkNisTKt1e4EAhIiXpyXJgiJW4Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- jQThumb -->
     <script type="text/javascript" src="/public/javascripts/jqthumb.js"></script>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
     <script>
         function DrawImage(hotimg)
         {
@@ -40,6 +41,10 @@
             });
         }
     </script>
+    <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB4yedOkmJJv19wwjVf2aRCV-Z2byy4CTk&language=en&callback=initMap&v=weekly&libraries=places"
+            defer
+    ></script>
 </head>
 <body>
 <header>
@@ -117,6 +122,22 @@
                     </div>
                 </div>
                 <div class="col-6">
+<!--                    -->
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="locationInput">search and choose one location from the candidates</label>
+                                <div style="display: flex;gap: 10px">
+                                    <input type="text" class="form-control" id="locationInput" name="location" required>
+                                    <button hidden id="locationSubmit" type="button" style="background-color: #0069D9;border: transparent;border-radius: 10%;color: white">search</button>
+                                </div>
+                                <input name="latitude"  hidden required id="latitudeInput">
+                                <input name="longitude"  hidden required  id="longitudeInput">
+                            </div>
+                        </div>
+                        <div id="map" hidden style="height: 200px"></div>
+                    </div>
+<!--                    -->
                     <div class="card mb-3">
                         <div class="card-body">
                             <div class="form-group">
@@ -143,21 +164,117 @@
         </form>
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
         <script>
-            const form = document.querySelector('form');
-            form.addEventListener('submit', async (event) => {
-                event.preventDefault(); // Prevent default form submission behavior
-                const formData = new FormData(event.target);
-                const data = Object.fromEntries(formData.entries()); // Convert FormData to JSON object
-                try {
-                    await axios.post('/upload', data); // Send form data to server
-                    window.location.href = '/success'; // Redirect to success page
-                } catch (err) {
-                    console.error(err);
-                    window.location.href = '/error'; // Redirect to error page
-                }
-            });
+
         </script>
+
     </div>
 </main>
 </body>
+<script>
+    let map;
+    let marker;
+    let geocoder;
+    let responseDiv;
+    let response;
+    let locationChosen;
+    let inputText;
+    let latitudeInput = document.getElementById("latitudeInput")
+    let longitudeInput = document.getElementById("longitudeInput")
+
+
+    inputText = document.getElementById("locationInput");
+    inputText.type = "text";
+    inputText.placeholder = "Enter a location";
+
+
+    const form = document.querySelector('form');
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Prevent default form submission behavior
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries()); // Convert FormData to JSON object
+       console.log(data)
+        try {
+            await axios.post('/upload', data); // Send form data to server
+            window.location.href = '/success'; // Redirect to success page
+        } catch (err) {
+            console.error(err);
+            window.location.href = '/error'; // Redirect to error page
+        }
+    });
+
+    function initMap() {
+        // Create a new Google Maps instance and bind it to the "map" element
+        map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 8, // Set the initial zoom level of the map
+            center: { lat: -34.397, lng: 150.644 }, // Set the initial center coordinates of the map
+            mapTypeControl: false, // Disable the map type control
+        });
+
+        geocoder = new google.maps.Geocoder(); // Create a geocoder object for geocoding and reverse geocoding
+
+        // Create an Autocomplete object for the input field with id "inputText"
+        let autocomplete = new google.maps.places.Autocomplete(inputText);
+
+        // Listen for the "place_changed" event when a place is selected from the autocomplete dropdown
+        autocomplete.addListener('place_changed', function() {
+            let place = autocomplete.getPlace(); // Get the selected place object
+            console.log(place); // Log the place object to the console
+
+            // Store the chosen location's name, latitude, and longitude in the locationChosen object
+            locationChosen = {
+                name: place.formatted_address,
+                latitude: place.geometry.location.lat(),
+                longitude: place.geometry.location.lng()
+            };
+
+            // Update the latitude and longitude input fields with the selected location's coordinates
+            latitudeInput.value = place.geometry.location.lat();
+            longitudeInput.value = place.geometry.location.lng();
+
+            // Set the center of the map to the selected location and display a marker
+            map.setCenter(place.geometry.location);
+            marker.setPosition(place.geometry.location);
+            marker.setMap(map);
+        });
+
+        marker = new google.maps.Marker({
+            map, // Set the marker's map to the created map instance
+        });
+
+        // Listen for a "click" event on the map and call the geocode function with the clicked location's coordinates
+        map.addListener("click", (e) => {
+            geocode({ location: e.latLng });
+        });
+    }
+
+    function clear() {
+        locationChosen = undefined;
+        marker.setMap(null); // Remove the marker from the map
+    }
+
+    function geocode(request) {
+        clear(); // Clear the previous chosen location and remove the marker
+
+        geocoder
+            .geocode(request) // Perform geocoding for the given location coordinates
+            .then((result) => {
+                //console.log(result)
+                map.zoom = 12; // Set the zoom level of the map to 12
+                const { results } = result;
+                map.setCenter(results[0].geometry.location); // Set the center of the map to the geocoded location
+                marker.setPosition(results[0].geometry.location); // Set the marker's position to the geocoded location
+                marker.setMap(map); // Display the marker on the map
+                inputText.value = results[0].formatted_address; // Update the input field with the formatted address
+                latitudeInput.value = results[0].geometry.location.lat(); // Update the latitude input field
+                longitudeInput.value = results[0].geometry.location.lng(); // Update the longitude input field
+                return results;
+            })
+            .catch((e) => {
+                console.log(e);
+                alert("Geocode was not successful for the following reason: " + e); // Display an alert for geocoding error
+            });
+    }
+
+    window.initMap = initMap;
+</script>
 </html>
