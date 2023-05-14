@@ -8,6 +8,8 @@ var app = require('../app');
 var debug = require('debug')('teamwork:server');
 var http = require('http');
 
+
+
 /**
  * Get port from environment and store in Express.
  */
@@ -88,3 +90,10 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+
+const io = require('socket.io')(server,{
+  pingTimeout:60000,
+});
+var socket_module=require('../controllers/socket.js');
+socket_module.init(io,app);

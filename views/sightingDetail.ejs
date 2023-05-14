@@ -48,6 +48,102 @@
                 window.location.href = '/upload';
             }
         </script>
+        <style>
+        /* Style for the overall chat container */
+        .chat-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Style for the chat box container */
+        .chat-box {
+        max-height: 300px;
+        overflow-y: auto;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        margin-bottom: 20px;
+        }
+
+        /* Style for the chat messages */
+        .chat-message {
+        margin-bottom: 10px;
+        }
+
+        .chat-message .username {
+        font-weight: bold;
+        color: #333;
+        }
+
+        .chat-message .message-content {
+        margin-left: 10px;
+        }
+
+        /* Style for the online user list container */
+        .user-list-container {
+        max-height: 200px;
+        overflow-y: auto;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        margin-bottom: 20px;
+        }
+
+        .user-list-container h3 {
+        margin-bottom: 10px;
+        }
+
+        .user-list-item {
+        margin-bottom: 5px;
+        }
+
+        .user-list-item .username {
+        font-weight: bold;
+        color: #333;
+        }
+
+        /* Style for the chat input form */
+        #chat-form {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+        }
+
+        #username-input,
+        #message-input {
+        padding: 8px;
+        border: none;
+        border-radius: 10px;
+        background-color: #f2f2f2;
+        font-size: 14px;
+        flex: 1;
+        }
+
+        #message-input {
+        margin-right: 10px;
+        }
+
+        #chatbutton {
+        padding: 10px 16px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+        }
+
+        #chatbutton:hover {
+        background-color: #0056b3;
+        }
+        </style>
 
     </head>
 
@@ -123,6 +219,67 @@
                         <p class="card-text" id="sighting-description"><strong>Description:</strong><%= sighting.Description %></p>
                         <p class="card-text" id="Date Seen"><strong>Date Seen:</strong> <%= new Date(sighting.DateSeen).toISOString() %> </p>
                         <p class="card-text" id="uploaded-by"><strong>Uploaded-by:</strong><%= sighting.username %></p>
+                        <div class="chat-container">
+                            <div class="chat-box">
+                                <ul id="chat-messages" class="chat-messages"></ul>
+                            </div>
+
+                            <form id="chat-form">
+                                <input type="text" id="message-input" placeholder="Message" />
+                                <button type="submit">Send</button>
+                            </form>
+                        </div>
+
+                        <script src="/socket.io/socket.io.js"></script>
+                        <script>
+                            // Connect to the server
+                            const socket = io();
+
+                            // Handle chat message form submission
+                            const form = document.getElementById('chat-form');
+                            const messages=document.getElementById('chat-messages');
+                            form.addEventListener('submit', (e) => {
+                                e.preventDefault();
+                               // const usernameInput = document.getElementById('username-input');
+                                const messageInput = document.getElementById('message-input');
+                                //const username = usernameInput.value;
+                                const message = messageInput.value;
+                                messageInput.value = '';
+
+                                // Send the username and message to the server
+                                socket.emit('chat message', { message });
+                            });
+
+
+                            // Handle received chat messages
+                            socket.on('chat message', (data) => {
+                                const { message, recipient } = data;
+                                const li = document.createElement('li');
+
+                                if (recipient) {
+                                    // Private message
+                                    li.textContent = `(Private) ${username} to ${recipient}: ${message}`;
+                                } else {
+                                    // Public message
+                                    li.textContent = `${message}`;
+                                }
+
+                                messages.appendChild(li);
+                            });
+
+                            if ('serviceWorker' in navigator) {
+                                window.addEventListener('load', () => {
+                                    navigator.serviceWorker.register('/service-worker.js')
+                                        .then(registration => {
+                                            console.log('Service Worker registered');
+                                        })
+                                        .catch(error => {
+                                            console.error('Service Worker registration failed:', error);
+                                        });
+                                });
+                            }
+                        </script>
+
                     </div>
                 </div>
             </div>

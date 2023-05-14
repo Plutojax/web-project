@@ -21,7 +21,6 @@ SightingSchema.statics.getSightingById = async function (sightingId) {
     }
 };
 
-
 // create sighting data model
 const Sighting = mongoose.model('sightings', SightingSchema);
 

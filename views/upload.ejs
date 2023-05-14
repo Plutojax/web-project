@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="">
 <head>
     <meta charset="utf-8">
     <title>Sightings</title>
@@ -26,6 +26,18 @@
                 // position       : { y: '50%', x: '50%'}, // Generate thumbnail starting from the center of the image
                 zoom           : '1', // Zoom ratio
                 method         : 'auto', // Submission method, for different browser environments, default is 'auto'
+            });
+        }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registered');
+                    })
+                    .catch(error => {
+                        console.error('Service Worker registration failed:', error);
+                    });
             });
         }
     </script>
