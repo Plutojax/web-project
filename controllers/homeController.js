@@ -9,6 +9,8 @@ router.get('/home', async(req, res) => {
     // Get all sighting data from the database
     Sighting.find({})
         .then((sightings) => {
+            // console.log("DATA SIGHTINGS",sightings)
+            // sightings.sort(function(a, b){return b.DateSeen - a.DateSeen });
             res.render('home', { sightings:sightings,username:coo });
         })
         .catch((err) => {
