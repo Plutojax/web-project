@@ -11,6 +11,8 @@
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
     <!-- jQThumb -->
     <script type="text/javascript" src="/public/javascripts/jqthumb.js"></script>
     <script>
@@ -30,7 +32,53 @@
             window.location.href = '/upload';
         }
 
+        function sort() {
+            const container = document.getElementById('container');
+            const sightings = JSON.parse('<%- JSON.stringify(sightings).replaceAll("\\\\","/") %>');
 
+            sightings.sort(function(a, b) {
+                return new Date(b.DateSeen) - new Date(a.DateSeen);
+            });
+
+            container.innerHTML = '';
+
+            sightings.forEach(function(sighting) {
+                const div = document.createElement('div');
+                div.classList.add('col-2');
+
+                const div2 = document.createElement('div');
+                div2.classList.add('card', 'p-2', 'mt-4');
+
+                const img = document.createElement('img');
+                img.src = sighting.image;
+                img.onload = function() {
+                    DrawImage(this);
+                };
+                img.classList.add('img-thumbnail');
+                img.alt = '';
+
+                const caption = document.createElement('div');
+                caption.classList.add('card-body', 'text-truncate');
+
+                const title = document.createElement('a');
+                title.href = '/sighting-detail/' + sighting._id;
+                title.textContent = sighting.Identification;
+
+                const dateSeen = document.createElement('p');
+                dateSeen.classList.add('text-truncate');
+                dateSeen.textContent = 'Seen on: ' + moment(sighting.DateSeen).format('YYYY-MM-DD');
+
+                caption.appendChild(title);
+                caption.appendChild(dateSeen);
+
+                div2.appendChild(img);
+                div2.appendChild(caption);
+
+                div.appendChild(div2);
+
+                container.appendChild(div);
+            });
+        }
 
     </script>
 </head>
@@ -65,7 +113,13 @@
             <div class="col-md-12">
                 <button type="button" class="btn btn-success my-3" onclick="upload()">
                     <i class="fas fa-upload"></i> Upload</button>
+                <button type="button" class="btn btn-success my-3 ml-auto float-right" onclick="sort()">
+                    Sort
+                </button>
+
             </div>
+
+
         </div>
     </div>
 </header>
