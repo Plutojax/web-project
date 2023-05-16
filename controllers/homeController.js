@@ -3,7 +3,11 @@ const router = express.Router();
 const Sighting = require('../model/Sighting');
 
 // Render the homepage
+const serveHomePage = (req, res) => {
+    res.render('home');
+};
 
+module.exports = { serveHomePage };
 router.get('/home', async(req, res) => {
     const coo=req.cookies.username;
     // Get all sighting data from the database

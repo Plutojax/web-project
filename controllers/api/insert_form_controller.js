@@ -1,24 +1,25 @@
 /**
  * Controller function for inserting a sighting post into the database.
  */
-const SightingPost = require('../../model/sighting');
+const SightingPost = require('../../model/Sighting');
 
 const insertSightingPost = (req, res) => {
     console.log('Reaching till controller');
+    console.log("req",req.body);
     const {
-        image, identification,description, dateSeen, username,location,latitude,longitude
+        image, Identification,Description, DateSeen, username,location,latitude,longitude
     } = req.body;
     const SightingPostObject = new SightingPost({
         image,
-        Identification: identification,
-        Description: description,
-        DateSeen: dateSeen,
+        Identification: Identification,
+        Description: Description,
+        DateSeen: DateSeen,
         username: username,
         location: location,
         latitude: latitude,
         longitude:longitude
     });
-    sighting.save()
+    SightingPostObject.save()
         .then(() => {
             // Redirect to success page
             res.redirect('/success');

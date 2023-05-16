@@ -8,5 +8,5 @@ const express = require('express');
 const router = express.Router();
 const { insertSightingPost } = require('../controllers/api/insert_form_controller');
 
-router.post('/upload', insertSightingPost);
+router.post('/', insertSightingPost);
 module.exports = router;

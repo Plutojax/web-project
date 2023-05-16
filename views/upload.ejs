@@ -52,7 +52,7 @@
 </header>
 <main>
     <div class="container">
-        <form action="/insert-post" method="post" onsubmit="return handleSubmit(event)">
+        <form action="/insert-post/" method="post" onsubmit="return handleSubmit(event)">
             <div class="row">
                 <div class="col-6">
                     <div class="card mb-3">
@@ -136,19 +136,6 @@
 
 
     const form = document.querySelector('form');
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Prevent default form submission behavior
-        const formData = new FormData(event.target);
-        const data = Object.fromEntries(formData.entries()); // Convert FormData to JSON object
-       console.log(data)
-        try {
-            await axios.post('/upload', data); // Send form data to server
-            window.location.href = '/success'; // Redirect to success page
-        } catch (err) {
-            console.error(err);
-            window.location.href = '/error'; // Redirect to error page
-        }
-    });
 
     function initMap() {
         // Create a new Google Maps instance and bind it to the "map" element

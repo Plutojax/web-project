@@ -15,22 +15,21 @@ if ('serviceWorker' in navigator) {
 function handleSubmit(event) {
     event.preventDefault();
     const form = event.target;
-    const formData = new FormData(form);
-    let idd = formData.get('sighitngIdentification');
-    if (idd.toString().trim().length<=0)
-    {
+
+    let idd = form.elements['identification'].value;
+    if (idd.toString().trim().length <= 0) {
         idd = "NotGiven"
     }
-    // Get form data from the request
+
     const dataBody = {
-        image: document.getElementById('bird_image').dataset.base64,
+        image: document.getElementById('imageInput').dataset.base64,
         Identification: idd,
-        Description: formData.get('sightingDescription'),
-        DateSeen: formData.get('dateSeen'),
-        username: formData.get('username'),
-        location: formData.get('locationInput'),
-        latitude: formData.get('latitudeInput'),
-        longitude: formData.get('longitudeInput'),
+        Description: form.elements['description'].value,
+        DateSeen: form.elements['dateSeen'].value,
+        username: form.elements['username'].value,
+        location: form.elements['location'].value,
+        latitude: form.elements['latitude'].value,
+        longitude: form.elements['longitude'].value,
     };
     const headers = new Headers();
     headers.append('Content-Type', 'application/json');

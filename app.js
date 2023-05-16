@@ -18,18 +18,13 @@ app.use(express.static('public'));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 //check session
-app.use(function(req, res, next) {
-    // Check if user is authenticated
-    if (req.session.user) {
-        res.locals.user = req.session.user;
-    }
-    next();
-});
+
 
 // Set the view engine and views directory
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
+const insertrouter = require('./routes/insert');
 
 // Set up the controllers
 const authController = require('./controllers/authController');
@@ -38,6 +33,7 @@ const detailController = require('./controllers/detailController');
 const uploadController = require('./controllers/uploadController');
 const path = require("path");
 app.use(express.static(path.join(__dirname, '')));
+app.use('/insert-post', insertrouter);
 app.use(authController);
 app.use(homeController);
 app.use(uploadController);
