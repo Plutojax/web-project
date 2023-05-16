@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Sighting = require('../model/Sighting');
 
-
 router.get('/sighting-location/:sightingId', async (req, res, next) => {
     // Extract the `sightingId` from the request parameters
     const sightingId = req.params.sightingId;

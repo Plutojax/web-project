@@ -13,34 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/4.0.0/ekko-lightbox.min.css" integrity="sha512-vC3vvXGPI9bplTilrP7d0YKtmHrMAH4q9dF6QSfIL/uOFIMsHu2wkmAITtFRkNisTKt1e4EAhIiXpyXJgiJW4Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- jQThumb -->
-    <script type="text/javascript" src="/public/javascripts/jqthumb.js"></script>
-    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
-    <script>
-        function DrawImage(hotimg)
-        {
-            $(hotimg).jqthumb({
-                classname      : 'jqthumb',
-                width          : '100%', // Width
-                height         : '250px', // Height
-                // position       : { y: '50%', x: '50%'}, // Generate thumbnail starting from the center of the image
-                zoom           : '1', // Zoom ratio
-                method         : 'auto', // Submission method, for different browser environments, default is 'auto'
-            });
-        }
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(registration => {
-                        console.log('Service Worker registered');
-                    })
-                    .catch(error => {
-                        console.error('Service Worker registration failed:', error);
-                    });
-            });
-        }
-    </script>
+    <script src="/javascripts/upload.js"></script>
     <script
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB4yedOkmJJv19wwjVf2aRCV-Z2byy4CTk&language=en&callback=initMap&v=weekly&libraries=places"
             defer
@@ -79,7 +52,7 @@
 </header>
 <main>
     <div class="container">
-        <form action="/upload" method="post" enctype="multipart/form-data">
+        <form action="/insert-post" method="post" onsubmit="return handleSubmit(event)">
             <div class="row">
                 <div class="col-6">
                     <div class="card mb-3">
@@ -88,34 +61,9 @@
                                 <label for="image">Upload Image</label>
                                 <div class="input-group">
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="imageInput" name="image" required>
+                                        <input type="file" id="imageInput" data-base64="" name="ImageInput" accept="image/*" onchange="imageUploaded(event)"/>
                                         <label class="custom-file-label" for="imageInput">Choose file</label>
-                                        <script>
-                                            const imageInput = document.getElementById('imageInput');
-                                            const label = document.querySelector('.custom-file-label');
-                                            imageInput.addEventListener('change', function() {
-                                                label.innerHTML = this.files[0].name;
-                                            });
-                                        </script>
                                     </div>
-                                </div>
-                                <div class="mt-3">
-                                    <img id="preview" src="https://via.placeholder.com/500x500" class="img-thumbnail" alt="">
-                                    <script>
-                                        function previewImage(input) {
-                                            if (input.files && input.files[0]) {
-                                                const reader = new FileReader();
-                                                reader.onload = function(e) {
-                                                    document.getElementById('preview').setAttribute('src', e.target.result);
-                                                }
-                                                reader.readAsDataURL(input.files[0]);
-                                            }
-                                        }
-                                        const imageInput2 = document.getElementById('imageInput');
-                                        imageInput2.addEventListener('change', function() {
-                                            previewImage(this);
-                                        });
-                                    </script>
                                 </div>
                             </div>
                         </div>

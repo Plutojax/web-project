@@ -4,8 +4,6 @@ const app = express();
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const Sighting = require('./model/Sighting');
-
-
 // Connect to the MongoDB database
 mongoose.connect('mongodb://127.0.0.1:27017/Sighting', {useNewUrlParser: true, useUnifiedTopology: true})
 mongoose.Promise = global.Promise;
@@ -19,11 +17,6 @@ app.use(express.static('public'));
 // Set up middleware
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-app.use(session({
-    secret: 'your-secret-key',
-    resave: false,
-    saveUninitialized: true
-}));
 //check session
 app.use(function(req, res, next) {
     // Check if user is authenticated
