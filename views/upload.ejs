@@ -13,6 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/4.0.0/ekko-lightbox.min.css" integrity="sha512-vC3vvXGPI9bplTilrP7d0YKtmHrMAH4q9dF6QSfIL/uOFIMsHu2wkmAITtFRkNisTKt1e4EAhIiXpyXJgiJW4Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="manifest" href="/manifest.json">
     <script src="/javascripts/upload.js"></script>
     <script
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB4yedOkmJJv19wwjVf2aRCV-Z2byy4CTk&language=en&callback=initMap&v=weekly&libraries=places"
@@ -79,8 +80,8 @@
                                     <input type="text" class="form-control" id="locationInput" name="location" required>
                                     <button hidden id="locationSubmit" type="button" style="background-color: #0069D9;border: transparent;border-radius: 10%;color: white">search</button>
                                 </div>
-                                <input name="latitude"  hidden required id="latitudeInput">
-                                <input name="longitude"  hidden required  id="longitudeInput">
+                                <input name="latitude"  hidden  id="latitudeInput">
+                                <input name="longitude"  hidden   id="longitudeInput">
                             </div>
                         </div>
                         <div id="map" hidden style="height: 200px"></div>

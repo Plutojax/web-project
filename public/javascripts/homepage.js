@@ -1,12 +1,7 @@
-/*
-* Check if the user's browser supports Service Workers and,
-* if it does, registers the service worker located at 'service-worker.js'.
-* */
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js');
 }
 
-const container =document.getElementById('container');
 
 /*
 * Handle the upgrade event for the indexedDB database.
@@ -62,7 +57,7 @@ const requestIDB = (() => {
  */
 async function savePostsToIndexedDB(posts) {
     try {
-        const simplifiedPosts = posts.slice(0, 5).map(({ _id, image,DateSeen,Identification }) => ({ _id, image,DateSeen,Identification }));
+        const simplifiedPosts = posts.slice(0, 5).map(({ _id, image,Identification }) => ({ _id, image,DateSeen,Identification }));
 
         // save the new array of objects to indexedDB
         // eslint-disable-next-line no-use-before-define
@@ -78,7 +73,6 @@ async function savePostsToIndexedDB(posts) {
         simplifiedPosts.forEach((post) => {
             savedPostsStore.add(post);
         });
-        console.log("save to indexDB successfully");
     } catch (error) {
         console.log(error);
     }
@@ -109,11 +103,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 div2.classList.add('card', 'p-2', 'mt-4');
 
                 const link = document.createElement('a'); // Create an 'a' element
-                link.href = `/sighting-detail/${sighting._id}`; // Set the href attribute to the desired URL
+                link.href = `/sightingDetail/${sighting._id}`; // Set the href attribute to the desired URL
 
                 const img = document.createElement('img');
                 img.src = sighting.image;
-                img.setAttribute('i_id', sighting._id);
                 img.onload = function () {
                     DrawImage(this);
                 };
@@ -128,12 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const title = document.createElement('a');
                 title.textContent = sighting.Identification;
 
-                const dateSeen = document.createElement('p');
-                dateSeen.classList.add('text-truncate');
-                dateSeen.textContent = 'Seen on: ' + sighting.DateSeen.split("T")[0];
 
                 caption.appendChild(title);
-                caption.appendChild(dateSeen);
 
                 div2.appendChild(link); // Add the 'a' element as a child of the div2 element
                 div2.appendChild(caption);

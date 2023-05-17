@@ -11,7 +11,7 @@ router.get('/sighting-location/:sightingId', async (req, res, next) => {
     res.send(sighting)
 });
 
-router.get('/sighting-detail/:sightingId', async (req, res, next) => {
+router.get('/sightingDetail/:sightingId', async (req, res, next) => {
     try {
         const coo=req.cookies.username;
         const sightingId = req.params.sightingId;
@@ -72,21 +72,7 @@ router.get('/sighting-detail/:sightingId', async (req, res, next) => {
     }
 });
 
-router.post('/updatedIdentification', async (req, res) => {
-    const { sightingId, newIdentification } = req.body;
-    console.log(sightingId)
-    try {
-        const updatedSighting = await Sighting.findByIdAndUpdate(sightingId, { Identification: newIdentification }, { new: true });
-        if (updatedSighting) {
-            res.status(200).json({ updatedIdentification: updatedSighting.Identification });
-        } else {
-            res.status(404).json({ error: 'Sighting not found.' });
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Failed to update identification.' });
-    }
-});
+
 
 
 

@@ -1,12 +1,10 @@
 const cacheName = 'bird-watching-app-cache';
 const assets = [
-  '/sighting-post-form',
   '/javascripts/homepage.js',
   '/javascripts/upload.js',
   '/javascripts/jqthumb.js',
   '/stylesheets/style.css',
-  '/sighting/',
-  '/',
+  '/sightingDetail/'
 ];
 
 /**
@@ -20,15 +18,16 @@ const assets = [
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(cacheName)
-      .then((cache) => {
-        cache.addAll(assets).then(() => {
-          console.log('assets cached successfully');
-        });
-      })
-      .catch((error) => {
-        console.log('Error while caching assets', error);
-      }),
+      caches.open(cacheName)
+          .then((cache) => {
+            return cache.addAll(assets);
+          })
+          .then(() => {
+            console.log('Assets cached successfully');
+          })
+          .catch((error) => {
+            console.log('Error while caching assets:', error);
+          })
   );
 });
 
@@ -120,11 +119,12 @@ async function handleGetPostsRequest(eventRequest) {
   const transaction = db.transaction(['postRequests', 'SavedPosts'], 'readwrite');
   const postRequestsStore = transaction.objectStore('postRequests');
   const savedRequestsStore = transaction.objectStore('SavedPosts');
-
   const [savedPosts, newOfflinePosts] = await Promise.all([
     getFromStore(savedRequestsStore, 'getAll'),
     getFromStore(postRequestsStore, 'getAll'),
   ]);
+  console.log('Saved Posts:', savedPosts);
+  console.log('New Offline Posts:', newOfflinePosts);
 
   const sightings = [...savedPosts, ...newOfflinePosts].map((post) => ({
     _id: post._id || `offid:${post.id}`,
@@ -182,6 +182,7 @@ async function saveRequestToIndexedDB(request) {
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('fetch', (event) => {
   const eventRequest = event.request.clone();
+
   event.respondWith(
     fetch(event.request)
       .then(async (networkResponse) => {
@@ -189,6 +190,7 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         }
         if (eventRequest.url.indexOf('get-posts') > -1) {
+          console.log("get post from mongoodb");
           return networkResponse;
         } if (eventRequest.url.indexOf('sighting-detail') > -1) {
           console.log('DEBUG...', networkResponse.clone().json().then((res) => {
@@ -197,8 +199,8 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         }
         return caches.open(cacheName).then((cache) => {
-          if (eventRequest.url.includes('/sighting/')) {
-            cache.put('/sighting/', networkResponse.clone());
+          if (eventRequest.url.includes('/sightingDetail/')) {
+            cache.put('/sightingDetail/', networkResponse.clone());
             return networkResponse;
           }
           cache.put(eventRequest, networkResponse.clone());
@@ -223,6 +225,7 @@ self.addEventListener('fetch', (event) => {
           });
         } if (eventRequest.url.indexOf('get-posts') > -1) {
           const response = await handleGetPostsRequest(eventRequest);
+          console.log("get post from index DB");
           return Promise.resolve(response);
         } if (eventRequest.url.indexOf('sighting-detail') > -1) {
           const response = await handleGetSightingDetailRequest(eventRequest);
@@ -257,7 +260,7 @@ function registerSyncEvent(tag) {
   return Promise.reject(new Error('Sync events are not supported'));
 }
 
-const handleUpgrade = (event) => {
+const handleUpgrade = () => {
   console.log('indexedDB upgraded');
 };
 

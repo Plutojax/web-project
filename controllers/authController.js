@@ -15,10 +15,7 @@ router.get('/login', (req, res) => {
 // Handle the login form submission
 router.post('/login', async (req, res) => {
     const { usernameOrEmail} = req.body;
-
     try {
-
-
         // Set the token as a cookie and redirect to the homepage
         res.cookie('username', usernameOrEmail)
         res.status(200).send(); // Send a 200 OK status for successful login
