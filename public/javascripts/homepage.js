@@ -6,7 +6,7 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js');
 }
 
-const imagesContainer = document.querySelector('#images-container');
+const container =document.getElementById('container');
 
 /*
 * Handle the upgrade event for the indexedDB database.
@@ -62,7 +62,7 @@ const requestIDB = (() => {
  */
 async function savePostsToIndexedDB(posts) {
     try {
-        const simplifiedPosts = posts.slice(0, 5).map(({ _id, image }) => ({ _id, image }));
+        const simplifiedPosts = posts.slice(0, 5).map(({ _id, image,DateSeen,Identification }) => ({ _id, image,DateSeen,Identification }));
 
         // save the new array of objects to indexedDB
         // eslint-disable-next-line no-use-before-define
@@ -78,6 +78,7 @@ async function savePostsToIndexedDB(posts) {
         simplifiedPosts.forEach((post) => {
             savedPostsStore.add(post);
         });
+        console.log("save to indexDB successfully");
     } catch (error) {
         console.log(error);
     }
@@ -89,28 +90,62 @@ async function savePostsToIndexedDB(posts) {
  * for each post to display it on the page.
  * @param {string} '/get-posts' - The server endpoint to fetch the posts from
  */
-fetch('/get-posts')
-    .then((response) => {
-        console.log('HELLO', response);
-        return response.json();
-    })
-    .then((posts) => {
-        console.log('.then posts CHECK', posts);
-        savePostsToIndexedDB(posts);
-        posts.forEach((post) => {
-            const img = document.createElement('img');
-            img.src = post.image;
-            img.setAttribute('data-id', post._id);
-            imagesContainer.appendChild(img);
-        });
-    })
-    .catch((error) => console.log(error));
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('container');
+
+    fetch('/get-posts')
+        .then((response) => {
+            console.log('HELLO', response);
+            return response.json();
+        })
+        .then((posts) => {
+            console.log('.then posts CHECK', posts);
+            savePostsToIndexedDB(posts);
+            posts.forEach((sighting) => {
+                const div = document.createElement('div');
+                div.classList.add('col-2');
+
+                const div2 = document.createElement('div');
+                div2.classList.add('card', 'p-2', 'mt-4');
+
+                const img = document.createElement('img');
+                img.src = sighting.image;
+                img.onload = function () {
+                    DrawImage(this);
+                };
+                img.classList.add('img-thumbnail');
+                img.alt = '';
+
+                const caption = document.createElement('div');
+                caption.classList.add('card-body', 'text-truncate');
+
+                const title = document.createElement('a');
+                title.textContent = sighting.Identification;
+
+                const dateSeen = document.createElement('p');
+                dateSeen.classList.add('text-truncate');
+                dateSeen.textContent = 'Seen on: ' + sighting.DateSeen.split("T")[0];
+
+                caption.appendChild(title);
+                caption.appendChild(dateSeen);
+
+                div2.appendChild(img);
+                div2.appendChild(caption);
+
+                div.appendChild(div2);
+
+                container.appendChild(div);
+            });
+        })
+        .catch((error) => console.log(error));
+});
+
 
 /*
 * click event listener for images.
 * data-id is fetched from the event and pass it to Sighting post detail page
 * */
-imagesContainer.addEventListener('click', (event) => {
+container.addEventListener('click', (event) => {
     const clickedImageId = event.target.getAttribute('data-id');
     console.log('Clicked image ID: ', clickedImageId);
     if (clickedImageId !== null) {

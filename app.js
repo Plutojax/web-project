@@ -25,6 +25,7 @@ app.set('view engine', 'ejs');
 app.set('views', './views');
 
 const insertrouter = require('./routes/insert');
+const fetchPostsWithImageIdRouter = require('./routes/getPost');
 
 // Set up the controllers
 const authController = require('./controllers/authController');
@@ -34,6 +35,7 @@ const uploadController = require('./controllers/uploadController');
 const path = require("path");
 app.use(express.static(path.join(__dirname, '')));
 app.use('/insert-post', insertrouter);
+app.use('/get-posts', fetchPostsWithImageIdRouter);
 app.use(authController);
 app.use(homeController);
 app.use(uploadController);

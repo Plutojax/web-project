@@ -33,53 +33,6 @@
             window.location.href = '/upload';
         }
 
-        function sort() {
-            const container = document.getElementById('container');
-            const sightings = JSON.parse('<%- JSON.stringify(sightings).replaceAll("\\\\","/") %>');
-
-            sightings.sort(function(a, b) {
-                return new Date(b.DateSeen) - new Date(a.DateSeen);
-            });
-
-            container.innerHTML = '';
-
-            sightings.forEach(function(sighting) {
-                const div = document.createElement('div');
-                div.classList.add('col-2');
-
-                const div2 = document.createElement('div');
-                div2.classList.add('card', 'p-2', 'mt-4');
-
-                const img = document.createElement('img');
-                img.src = sighting.image;
-                img.onload = function() {
-                    DrawImage(this);
-                };
-                img.classList.add('img-thumbnail');
-                img.alt = '';
-
-                const caption = document.createElement('div');
-                caption.classList.add('card-body', 'text-truncate');
-
-                const title = document.createElement('a');
-                title.href = '/sighting-detail/' + sighting._id;
-                title.textContent = sighting.Identification;
-
-                const dateSeen = document.createElement('p');
-                dateSeen.classList.add('text-truncate');
-                dateSeen.textContent = 'Seen on: ' + moment(sighting.DateSeen).format('YYYY-MM-DD');
-
-                caption.appendChild(title);
-                caption.appendChild(dateSeen);
-
-                div2.appendChild(img);
-                div2.appendChild(caption);
-
-                div.appendChild(div2);
-
-                container.appendChild(div);
-            });
-        }
 
     </script>
 </head>
@@ -127,68 +80,6 @@
 <main>
     <div class="container-fluid">
         <div class="row row-cols-1 row-cols-md-3 g-4" id="container">
-            <script>
-                const container = document.getElementById('container');
-                const sightings = JSON.parse('<%- JSON.stringify(sightings).replaceAll("\\\\","/") %>');
-
-
-                sightings.forEach(function(sighting) {
-                    const div = document.createElement('div');
-                    div.classList.add('col-2');
-
-                    const div2= document.createElement('div');
-                    div2.classList.add('card', 'p-2', 'mt-4');
-
-                    const img = document.createElement('img');
-                    img.src = sighting.image;
-                    img.onload = function () {
-                        DrawImage(this);
-                    }
-                    img.classList.add('img-thumbnail');
-                    img.alt = '';
-
-
-
-                    const caption = document.createElement('div');
-                    caption.classList.add('card-body', 'text-truncate');
-
-                    const title = document.createElement('a');
-
-                    title.href = '/sighting-detail/' + sighting._id; // modify here, make it link to detail page
-                    title.textContent = sighting.Identification;
-
-                    const dateSeen = document.createElement('p');
-                    dateSeen.classList.add('text-truncate');
-                    dateSeen.textContent = 'Seen on: ' + sighting.DateSeen.split("T")[0];
-
-
-                    caption.appendChild(title);
-                    caption.appendChild(dateSeen);
-
-                    div2.appendChild(img);
-                    div2.appendChild(caption);
-
-                    div.appendChild(div2);
-
-                    container.appendChild(div);
-                });
-
-
-
-                if ('serviceWorker' in navigator) {
-                    window.addEventListener('load', () => {
-                        navigator.serviceWorker.register('/service-worker.js')
-                            .then(registration => {
-                                console.log('Service Worker registered');
-                            })
-                            .catch(error => {
-                                console.error('Service Worker registration failed:', error);
-                            });
-                    });
-                }
-
-            </script>
-
         </div>
     </div>
 </main>

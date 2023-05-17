@@ -1,9 +1,9 @@
 const cacheName = 'bird-watching-app-cache';
 const assets = [
   '/sighting-post-form',
+  '/javascripts/homepage.js',
   '/javascripts/upload.js',
-  '/javascripts/sightingDetail.js',
-  '/javascripts/home.js',
+  '/javascripts/jqthumb.js',
   '/stylesheets/style.css',
   '/sighting/',
   '/',
