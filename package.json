@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "isomorphic-fetch": "^3.0.0",
     "fetch": "^1.1.0",
     "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",

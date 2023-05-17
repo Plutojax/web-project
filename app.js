@@ -1,9 +1,8 @@
 const express = require('express');
-const session = require('express-session');
 const app = express();
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
-const Sighting = require('./model/Sighting');
+const fetch = require('isomorphic-fetch');
 // Connect to the MongoDB database
 mongoose.connect('mongodb://127.0.0.1:27017/Sighting', {useNewUrlParser: true, useUnifiedTopology: true})
 mongoose.Promise = global.Promise;

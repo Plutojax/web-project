@@ -108,13 +108,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 const div2 = document.createElement('div');
                 div2.classList.add('card', 'p-2', 'mt-4');
 
+                const link = document.createElement('a'); // Create an 'a' element
+                link.href = `/sighting-detail/${sighting._id}`; // Set the href attribute to the desired URL
+
                 const img = document.createElement('img');
                 img.src = sighting.image;
+                img.setAttribute('i_id', sighting._id);
                 img.onload = function () {
                     DrawImage(this);
                 };
                 img.classList.add('img-thumbnail');
                 img.alt = '';
+
+                link.appendChild(img); // Add the img element as a child of the 'a' element
 
                 const caption = document.createElement('div');
                 caption.classList.add('card-body', 'text-truncate');
@@ -129,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 caption.appendChild(title);
                 caption.appendChild(dateSeen);
 
-                div2.appendChild(img);
+                div2.appendChild(link); // Add the 'a' element as a child of the div2 element
                 div2.appendChild(caption);
 
                 div.appendChild(div2);
@@ -145,10 +151,3 @@ document.addEventListener('DOMContentLoaded', () => {
 * click event listener for images.
 * data-id is fetched from the event and pass it to Sighting post detail page
 * */
-container.addEventListener('click', (event) => {
-    const clickedImageId = event.target.getAttribute('data-id');
-    console.log('Clicked image ID: ', clickedImageId);
-    if (clickedImageId !== null) {
-        window.location.href = `/sighting/?id=${clickedImageId}`;
-    }
-});
