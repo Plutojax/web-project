@@ -301,6 +301,7 @@ function deleteRecordFromIndexDB(objectStore, key) {
 self.addEventListener('sync', (event) => {
   if (event.tag.indexOf('insert-post-sync') > -1) {
     // eslint-disable-next-line no-debugger
+    console.log("sync successfully 2.0")
     const postInsertRequestDB = requestIDB.result;
     const transaction = postInsertRequestDB.transaction(['postRequests'], 'readwrite');
     const postRequestsStore = transaction.objectStore('postRequests');
@@ -311,10 +312,11 @@ self.addEventListener('sync', (event) => {
       const post = evt.target.result;
 
       const dataBody = {
-        image: post.image,
-        timestamp: post.timestamp,
-        description: post.description,
-        user_nickname: post.user_nickname,
+        image:post.image,
+        Identification: post.Identification,
+        Description: post.Description,
+        DateSeen: post.DateSeen,
+        location: post.location,
       };
       const headers = new Headers();
       headers.append('Content-Type', 'application/json');
@@ -325,6 +327,7 @@ self.addEventListener('sync', (event) => {
         body: JSON.stringify(dataBody),
         // eslint-disable-next-line consistent-return
       }).then((response) => {
+        console.log("sync successfully")
         if (response.status === 200) {
           const transaction2 = postInsertRequestDB.transaction(['postRequests'], 'readwrite');
           const postRequestsStore2 = transaction2.objectStore('postRequests');
