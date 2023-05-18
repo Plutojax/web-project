@@ -58,7 +58,7 @@ const requestIDB = (() => {
 async function savePostsToIndexedDB(posts) {
     try {
         const simplifiedPosts = posts.slice(0, 5).map(({ _id, image,Identification }) => ({ _id, image,Identification }));
-
+        console.log("save to POst",simplifiedPosts);
         // save the new array of objects to indexedDB
         // eslint-disable-next-line no-use-before-define
         const db = requestIDB.result;
