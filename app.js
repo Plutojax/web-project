@@ -43,7 +43,5 @@ app.use(uploadController);
 app.use(detailController);
 
 
-
-
 // Export the app instance
 module.exports = app;

@@ -1,10 +1,12 @@
 const cacheName = 'bird-watching-app-cache';
 const assets = [
-  '/javascripts/homepage.js',
-  '/javascripts/upload.js',
-  '/javascripts/jqthumb.js',
-  '/stylesheets/style.css',
-  '/sightingDetail/'
+    '/javascripts/homepage.js',
+    '/javascripts/upload.js',
+    '/javascripts/jqthumb.js',
+    '/stylesheets/style.css',
+    '/home',
+    '/login',
+    '/upload'
 ];
 
 /**
@@ -199,10 +201,6 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         }
         return caches.open(cacheName).then((cache) => {
-          if (eventRequest.url.includes('/sightingDetail/')) {
-            cache.put('/sightingDetail/', networkResponse.clone());
-            return networkResponse;
-          }
           cache.put(eventRequest, networkResponse.clone());
           return networkResponse;
         });
@@ -233,9 +231,6 @@ self.addEventListener('fetch', (event) => {
         }
         return caches.open(cacheName)
           .then(async (cache) => {
-            if (eventRequest.url.includes('/sighting/')) {
-              return cache.match('/sighting/');
-            }
             return cache.match(eventRequest);
           })
           .then((response) => {
