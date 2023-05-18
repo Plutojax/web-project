@@ -27,7 +27,6 @@ const insertrouter = require('./routes/insert');
 const fetchPostsWithImageIdRouter = require('./routes/getPost');
 const sightingDetail=require('./routes/getDetail');
 // Set up the controllers
-const authController = require('./controllers/authController');
 const homeController = require('./controllers/homeController');
 const detailController = require('./controllers/detailController');
 const uploadController = require('./controllers/uploadController');
@@ -37,7 +36,7 @@ app.use(express.static(path.join(__dirname, '')));
 app.use('/insert-post', insertrouter);
 app.use('/get-posts', fetchPostsWithImageIdRouter);
 app.use('/sighting-detail',sightingDetail);
-app.use(authController);
+
 app.use(homeController);
 app.use(uploadController);
 app.use(detailController);

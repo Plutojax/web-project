@@ -216,7 +216,6 @@ self.addEventListener('fetch', (event) => {
             .catch((error) => {
               console.log('sync event registration failed: ', error);
             });
-
           return new Response(JSON.stringify({ message: 'success' }), {
             headers: { 'Content-Type': 'application/json' },
             status: 200,

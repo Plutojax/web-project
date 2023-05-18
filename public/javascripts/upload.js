@@ -26,7 +26,6 @@ function handleSubmit(event) {
         Identification: idd,
         Description: form.elements['description'].value,
         DateSeen: form.elements['dateSeen'].value,
-        username: form.elements['username'].value,
         location: form.elements['location'].value,
         latitude: form.elements['latitude'].value,
         longitude: form.elements['longitude'].value,

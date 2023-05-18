@@ -4,12 +4,11 @@ const Sighting = require('../model/Sighting');
 
 // Render the homepage
 
-router.get('/home', async(req, res) => {
-    const coo=req.cookies.username;
+router.get('/', async(req, res) => {
     // Get all sighting data from the database
     Sighting.find({})
         .then((sightings) => {
-            res.render('home', { username:coo });
+            res.render('home');
         })
         .catch((err) => {
             // Handle errors and show error page

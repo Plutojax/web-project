@@ -8,13 +8,12 @@ const Sighting = require('../model/Sighting');
 
 // Handle GET /upload route to render the upload form
 router.get('/upload', (req, res) => {
-    const coo=req.cookies.username;
     // const user = req.user;
     // if (!user) {
     //     // handle case where user is not logged in
     // }
     // res.render('upload', { user });
-    res.render('upload',{username:coo});
+    res.render('upload');
 });
 
 // Handle POST /upload route to process form submission

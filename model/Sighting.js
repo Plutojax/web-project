@@ -6,7 +6,6 @@ const SightingSchema = new mongoose.Schema({
     Identification: { type: String, required: true },
     Description: { type: String, required: true },
     DateSeen: { type: Date, required: true },
-    username: { type: String, required: true },
     location: {type:String, required: true},
     latitude: {type: Number},
     longitude: {type: Number}

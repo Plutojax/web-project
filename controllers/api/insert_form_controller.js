@@ -7,14 +7,13 @@ const insertSightingPost = (req, res) => {
     console.log('Reaching till controller');
     console.log("req",req.body);
     const {
-        image, Identification,Description, DateSeen, username,location,latitude,longitude
+        image, Identification,Description, DateSeen,location,latitude,longitude
     } = req.body;
     const SightingPostObject = new SightingPost({
         image,
         Identification: Identification,
         Description: Description,
         DateSeen: DateSeen,
-        username: username,
         location: location,
         latitude: latitude,
         longitude:longitude
