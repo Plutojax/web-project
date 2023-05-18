@@ -310,7 +310,7 @@ self.addEventListener('sync', (event) => {
 
     postIdRequest.onsuccess = (evt) => {
       const post = evt.target.result;
-
+      console.log("post get from index DB",post);
       const dataBody = {
         image:post.image,
         Identification: post.Identification,
@@ -320,7 +320,7 @@ self.addEventListener('sync', (event) => {
       };
       const headers = new Headers();
       headers.append('Content-Type', 'application/json');
-
+      console.log("ready to sync to Mongoo DB");
       fetch('/insert-post', {
         method: 'POST',
         headers,
