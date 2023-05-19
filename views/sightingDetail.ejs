@@ -230,7 +230,12 @@
                         <hr style="border-top: 1px solid #000; width: 100%;" class="mb-4">
 
                         <label for="sighting-identification"><strong>Identification:</strong></label>
-                        <textarea class="form-control" id="sighting-identification" rows="1"></textarea>
+                        <form action="/update-id" method="post" onsubmit="return handSubmit(event)">
+                            <textarea class="form-control" id="sighting-identification" name="sighting-identification" rows="1"></textarea>
+
+                            <textarea class="form-control" id="sighting-id" name="sighting-id" rows="1" hidden></textarea>
+                            <button type="submit" class="btn btn-success btn-block mt-4"><i class="far fa-comment"></i> Modify identification</button>
+                        </form>
                         <div style="width: 100%; height: 300px; overflow-y: auto;">
                             <p class="card-text" id="scientific-name"><strong>Common name/scientific name:</strong> <%= birdname %></p>
                             <p class="card-text" id="abstracts"><strong>Abstracts:</strong> <%= abstracts %></p>
@@ -292,9 +297,6 @@
                 </div>
             </div>
 
-            <div class="">
-                    <button type="button" onclick="" class="btn btn-success btn-block mt-4"><i class="far fa-comment"></i> Modify identification</button>
-            </div>
         </div>
     </div>
 </main>

@@ -131,7 +131,7 @@ async function handleGetPostsRequest(eventRequest) {
     image: post.image,
     Identification:post.Identification,
     Description:post.Description,
-    DateSeen:post.DataSeen,
+    DateSeen:post.DateSeen,
     location:post.location
   }));
 
@@ -167,6 +167,25 @@ async function saveRequestToIndexedDB(request) {
 
   return addRequest.result;
 }
+async function saveIdToIndexedDB(request) {
+  const requestBody = await request.json();
+  const postInsertRequestDB = requestIDB.result;
+  const transaction = postInsertRequestDB.transaction(['user'], 'readwrite');
+  const postRequestsStore = transaction.objectStore('user');
+  const addRequest = postRequestsStore.add(requestBody);
+
+  await new Promise((resolve, reject) => {
+    addRequest.onsuccess = function (event) {
+      resolve(event.target.result);
+    };
+
+    addRequest.onerror = function (event) {
+      console.error('Error saving post in indexedDB', event.target.error);
+      reject(event.target.error);
+    };
+  });
+  return addRequest.result;
+}
 
 /**
  * This code implements a network first cache fallback approach for handling requests.
@@ -193,10 +212,11 @@ self.addEventListener('fetch', (event) => {
         if (eventRequest.url.indexOf('get-posts') > -1) {
           console.log("get post from mongoodb");
           return networkResponse;
-        } if (eventRequest.url.indexOf('sighting-detail') > -1) {
-          console.log('DEBUG...', networkResponse.clone().json().then((res) => {
-            console.log('Real check', res);
-          }));
+        }
+        if (eventRequest.url.indexOf('sighting-detail') > -1) {
+          return networkResponse;
+        }
+        if (eventRequest.url.indexOf('update-id') > -1) {
           return networkResponse;
         }
         return caches.open(cacheName).then((cache) => {
@@ -222,7 +242,21 @@ self.addEventListener('fetch', (event) => {
               headers: { 'Content-Type': 'application/json' },
               status: 200,
             });
-          } if (eventRequest.url.indexOf('get-posts') > -1) {
+          }if (eventRequest.url.indexOf('update-id') > -1) {
+            const postIndexedDBID = await saveIdToIndexedDB(eventRequest);
+            registerSyncEvent(`update-id-sync-${postIndexedDBID}`)
+                .then(() => {
+                  console.log('sync event registered successfully');
+                })
+                .catch((error) => {
+                  console.log('sync event registration failed: ', error);
+                });
+            return new Response(JSON.stringify({message: 'success'}), {
+              headers: {'Content-Type': 'application/json'},
+              status: 200,
+            });
+          }
+          if (eventRequest.url.indexOf('get-posts') > -1) {
             const response = await handleGetPostsRequest(eventRequest);
             return Promise.resolve(response);
           } if (eventRequest.url.indexOf('sighting-detail') > -1) {
@@ -327,6 +361,41 @@ self.addEventListener('sync', (event) => {
         }
       }).catch((error) => {
         console.log('Error occurred while saving offline posts', error);
+      });
+    };
+  }
+  if (event.tag.indexOf('update-id-sync') > -1) {
+    console.log("sync successfully 2.0");
+    const postInsertRequestDB = requestIDB.result;
+    const transaction = postInsertRequestDB.transaction(['user'], 'readwrite');
+    const postRequestsStore = transaction.objectStore('user');
+    const postKey = parseInt(event.tag.substring(event.tag.lastIndexOf('-') + 1), 10);
+    const postIdRequest = postRequestsStore.get(postKey);
+
+    postIdRequest.onsuccess = (evt) => {
+      const post = evt.target.result;
+      console.log("post get from index DB",post);
+      const dataBody = {
+        Identification: post.Identification,
+        _id:post._id
+      };
+      const headers = new Headers();
+      headers.append('Content-Type', 'application/json');
+      console.log("ready to sync to Mongoo DB");
+      fetch('/update-id', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(dataBody),
+      }).then((response) => {
+        console.log("sync successfully")
+        if (response.status === 200) {
+          const transaction2 = postInsertRequestDB.transaction(['user'], 'readwrite');
+          const postRequestsStore2 = transaction2.objectStore('user');
+          postRequestsStore2.delete(post.id);
+          return response.json();
+        }
+      }).catch((error) => {
+        console.log('Error occurred while update id', error);
       });
     };
   }

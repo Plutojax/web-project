@@ -7,31 +7,34 @@ const postId = window.location.pathname.split('/').pop();
 // This variable will be used to store the post details.
 let post = null;
 
-async function modifyIdentification() {
-    const newIdentification = document.getElementById('sighting-identification').value;
-    console.log(newIdentification);
-    if (newIdentification.trim() === '') {
-        alert('Identification cannot be empty.');
-        return;
+function handSubmit(event) {
+    event.preventDefault();
+    const form = event.target;
+    let idd = form.elements['sighting-identification'].value;
+    let iddd=form.elements['sighting-id'].value;
+    console.log("iddd",iddd);
+    if (idd.toString().trim().length <= 0) {
+        alert('Identification can not be empty');
     }
 
-    try {
-        const response = await axios.post('/updatedIdentification', {
-            sightingId: '<%= sighting._id %>',
-            newIdentification: newIdentification
-        });
-
+    const dataBody = {
+        Identification: idd,
+        _id:iddd
+    };
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    fetch('/update-id', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(dataBody),
+        // eslint-disable-next-line consistent-return
+    }).then((response) => {
         if (response.status === 200) {
-            // document.getElementById('sighting-identification').value = response.data.updatedIdentification;
-            location.reload();
-            alert('Identification updated successfully.');
-        } else {
-            location.reload();
-            throw new Error('Failed to update identification.');
+            alert('Data updated successfully');
         }
-    } catch (error) {
-        console.error(error);
-    }
+    }).catch((error) => {
+        console.log('error in update data', error);
+    });
 }
 
 fetch('/sighting-detail', {
@@ -48,5 +51,6 @@ fetch('/sighting-detail', {
         document.getElementById('Date Seen').innerHTML=`<strong>Date Seen: </strong>${new Date(postData.DateSeen).toISOString()}`;
         document.getElementById('sighting-location').innerHTML=postData.location;
         document.getElementById('lightbox-image').src=postData.image;
+        document.getElementById('sighting-id').innerHTML=postData._id;
     })
     .catch((err) => console.error(err));
