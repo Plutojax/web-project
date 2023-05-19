@@ -129,7 +129,10 @@ async function handleGetPostsRequest(eventRequest) {
   const sightings = [...savedPosts, ...newOfflinePosts].map((post) => ({
     _id: post._id || `offid:${post.id}`,
     image: post.image,
-    Identification:post.Identification
+    Identification:post.Identification,
+    Description:post.Description,
+    DataSeen:post.DataSeen,
+    location:post.location
   }));
 
   return new Response(JSON.stringify(sightings), {
