@@ -5,15 +5,14 @@ const Sighting = require('../model/Sighting');
 router.get('/sighting-location/:sightingId', async (req, res, next) => {
     // Extract the `sightingId` from the request parameters
     const sightingId = req.params.sightingId;
-    console.log(sightingId)
+    console.log(sightingId);
     // Fetch the sighting with the given `sightingId` and send it as the response
     const sighting = await Sighting.getSightingById(sightingId);
-    res.send(sighting)
+    res.send(sighting);
 });
 
 router.get('/sightingDetail/:sightingId', async (req, res, next) => {
     try {
-        const coo=req.cookies.username;
         const sightingId = req.params.sightingId;
         console.log(sightingId)
         const sighting = await Sighting.getSightingById(sightingId);
@@ -51,16 +50,16 @@ router.get('/sightingDetail/:sightingId', async (req, res, next) => {
                         // The results are in the 'data' object
                         var binding = data.results.bindings;
                         if (binding.length>0)
-                            res.render('sightingDetail',{sighting:sighting,username:coo,birdname:binding[0].name.value,abstracts:binding[0].abstract.value,link:binding[0].Animal.value})
+                            res.render('sightingDetail',{birdname:binding[0].name.value,abstracts:binding[0].abstract.value,link:binding[0].Animal.value})
                         else
                         {
-                            res.render('sightingDetail',{sighting:sighting,username:coo,birdname:"Sorry",abstracts:"did not find any bird via identification",link:"error!!"})
+                            res.render('sightingDetail',{birdname:"Sorry",abstracts:"did not find any bird via identification",link:"error!!"})
                         }
                     });
             }
             else
             {
-                res.render('sightingDetail',{sighting:sighting,username:coo,birdname:"Sorry",abstracts:"No identification of this sighting",link:"error!!"})
+                res.render('sightingDetail',{birdname:"Sorry",abstracts:"No identification of this sighting",link:"error!!"})
             }
 
             // res.render('sightingDetail', { sighting:sighting,username:coo });
