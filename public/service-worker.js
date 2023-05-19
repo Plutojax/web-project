@@ -183,20 +183,6 @@ async function saveRequestToIndexedDB(request) {
 //    The promise handles the `onsuccess` and `onerror` events of the `addRequest`.
 //    On success, it resolves with the result of the `addRequest`.
 //    On error, it logs an error message and rejects with the corresponding error.
-
-
-// This asynchronous function saves a request body to the 'user' object store in indexedDB.
-// It receives a request object as a parameter.
-// The function performs the following steps:
-// 1. Parses the request body from the provided request object by calling the `json()` method.
-// 2. Retrieves the indexedDB database instance from the global `requestIDB` object.
-// 3. Starts a read-write transaction on the 'user' object store.
-// 4. Retrieves the object store from the transaction.
-// 5. Adds the parsed request body to the 'user' store by calling the `add()` method.
-// 6. Returns a promise that resolves when the addition is successful or rejects if an error occurs.
-//    The promise handles the `onsuccess` and `onerror` events of the `addRequest`.
-//    On success, it resolves with the result of the `addRequest`.
-//    On error, it logs an error message and rejects with the corresponding error.
 async function saveIdToIndexedDB(request) {
   const requestBody = await request.json();
   const postInsertRequestDB = requestIDB.result;
