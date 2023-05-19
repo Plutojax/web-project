@@ -44,17 +44,17 @@ self.addEventListener('activate', (event) => {
 // This function retrieves data from a specified store in an indexedDB database.
 // It takes in the store object, a method name, an optional ID, and an optional index.
 // Returns a promise that resolves with the retrieved data or rejects with an error.
-function getFromStore(store, method, id, index) {
+function getFromStore(store, m, i, index) {
   return new Promise((resolve, reject) => {
     let request;
-    if (method === 'getAll') {
+    if (m === 'getAll') {
       request = store.getAll();
-    } else if (method === 'get') {
+    } else if (m === 'get') {
       if (index) {
         const _idIndex = store.index(index);
-        request = _idIndex.get(id);
+        request = _idIndex.get(i);
       } else {
-        request = store.get(id);
+        request = store.get(i);
       }
     }
 
@@ -77,24 +77,18 @@ function getFromStore(store, method, id, index) {
 // 8. If the ID does not include 'offid:', it directly uses the getFromStore function to retrieve the post detail
 //    from the 'SavedPosts' store, using the ID and the '_id' index.
 // 9. Returns a response containing the retrieved post detail as a JSON string.
-async function handleGetSightingDetailRequest(eventRequest) {
-  const db = requestIDB.result;
-  const transaction = db.transaction(['postRequests', 'SavedPosts'], 'readwrite');
-  const postRequestsStore = transaction.objectStore('postRequests');
-  const savedRequestsStore = transaction.objectStore('SavedPosts');
+async function GetDetail(eventRequest) {
+  const db = reIndexDB.result;
+  const transaction = db.transaction([ 'SavedPosts'], 'readwrite');
+  const store = transaction.objectStore('SavedPosts');
 
   const url = eventRequest.referrer;
   const id = url.split('/').pop();
 
-  let postDetail = null;
-  if (id.includes('offid:')) {
-    let postId = id.replace(/^offid:/, '');
-    postId = parseInt(postId);
-    postDetail = await getFromStore(postRequestsStore, 'get', postId);
-  } else {
-    postDetail = await getFromStore(savedRequestsStore, 'get', id, '_id');
-  }
-  return new Response(JSON.stringify(postDetail), {
+  let d = null;
+  d = await getFromStore(store, 'get', id, '_id');
+
+  return new Response(JSON.stringify(d), {
     headers: { 'Content-Type': 'application/json' },
   });
 }
@@ -111,8 +105,8 @@ async function handleGetSightingDetailRequest(eventRequest) {
 //    'image', 'Identification', 'Description', 'DateSeen', and 'location'.
 // 7. Returns a response containing the 'sightings' array as a JSON string.
 //    The response has the 'Content-Type' header set to 'application/json'.
-async function handleGetPostsRequest(eventRequest) {
-  const db = requestIDB.result;
+async function GetPRequest(eventRequest) {
+  const db = reIndexDB.result;
   const transaction = db.transaction(['SavedPosts'], 'readwrite');
   const savedRequestsStore = transaction.objectStore('SavedPosts');
   const [savedPosts] = await Promise.all([
@@ -146,12 +140,12 @@ async function handleGetPostsRequest(eventRequest) {
 //    The promise handles the `onsuccess` and `onerror` events of the `addRequest`.
 //    On success, it resolves with the result of the `addRequest`.
 //    On error, it logs an error message and rejects with the corresponding error.
-async function saveRequestToIndexedDB(request) {
-  const requestBody = await request.json();
-  const postInsertRequestDB = requestIDB.result;
-  const transaction = postInsertRequestDB.transaction(['postRequests'], 'readwrite');
-  const postRequestsStore = transaction.objectStore('postRequests');
-  const addRequest = postRequestsStore.add(requestBody);
+async function saveRToIndexedDB(request) {
+  const re = await request.json();
+  const db = reIndexDB.result;
+  const transaction = db.transaction(['postRequests'], 'readwrite');
+  const store = transaction.objectStore('postRequests');
+  const addRequest = store.add(re);
 
   await new Promise((resolve, reject) => {
     addRequest.onsuccess = function (event) {
@@ -181,11 +175,11 @@ async function saveRequestToIndexedDB(request) {
 //    On success, it resolves with the result of the `addRequest`.
 //    On error, it logs an error message and rejects with the corresponding error.
 async function saveIdToIndexedDB(request) {
-  const requestBody = await request.json();
-  const postInsertRequestDB = requestIDB.result;
-  const transaction = postInsertRequestDB.transaction(['user'], 'readwrite');
-  const postRequestsStore = transaction.objectStore('user');
-  const addRequest = postRequestsStore.add(requestBody);
+  const re = await request.json();
+  const db = reIndexDB.result;
+  const transaction = db.transaction(['user'], 'readwrite');
+  const store = transaction.objectStore('user');
+  const addRequest = store.add(re);
 
   await new Promise((resolve, reject) => {
     addRequest.onsuccess = function (event) {
@@ -217,9 +211,9 @@ async function saveIdToIndexedDB(request) {
 //      registers a sync event for later synchronization, and returns a JSON response with a success message.
 //    - If the URL includes 'update-id', it saves the request to the 'user' object store in indexedDB,
 //      registers a sync event for later synchronization, and returns a JSON response with a success message.
-//    - If the URL includes 'get-posts', it handles the request by calling the 'handleGetPostsRequest' function,
+//    - If the URL includes 'get-posts', it handles the request by calling the 'GetPRequest' function,
 //      which retrieves and returns the posts from the indexedDB and network.
-//    - If the URL includes 'sighting-detail', it handles the request by calling the 'handleGetSightingDetailRequest' function,
+//    - If the URL includes 'sighting-detail', it handles the request by calling the 'GetDetail' function,
 //      which retrieves and returns the post detail from the indexedDB and network.
 //    - For other URLs, it attempts to fetch the response from the cache using the specified cache name.
 //      If a matching response is found, it returns the response; otherwise, it returns a response indicating
@@ -254,26 +248,26 @@ self.addEventListener('fetch', (event) => {
       })
         .catch(async () => {
           if (eventRequest.url.indexOf('insert-post') > -1) {
-            const postIndexedDBID = await saveRequestToIndexedDB(eventRequest);
-            registerSyncEvent(`insert-post-sync-${postIndexedDBID}`)
+            const dbid = await saveRToIndexedDB(eventRequest);
+            regiSync(`upload-sync-${dbid}`)
                 .then(() => {
-                  console.log('sync event registered successfully');
+                  console.log('sync has been regi');
                 })
                 .catch((error) => {
-                  console.log('sync event registration failed: ', error);
+                  console.log('sync regi failed: ', error);
                 });
             return new Response(JSON.stringify({ message: 'success' }), {
               headers: { 'Content-Type': 'application/json' },
               status: 200,
             });
           }if (eventRequest.url.indexOf('update-id') > -1) {
-            const postIndexedDBID = await saveIdToIndexedDB(eventRequest);
-            registerSyncEvent(`update-id-sync-${postIndexedDBID}`)
+            const dbid = await saveIdToIndexedDB(eventRequest);
+            regiSync(`update-id-sync-${dbid}`)
                 .then(() => {
-                  console.log('sync event registered successfully');
+                  console.log('sync has been regi');
                 })
                 .catch((error) => {
-                  console.log('sync event registration failed: ', error);
+                  console.log('sync regi failed: ', error);
                 });
             return new Response(JSON.stringify({message: 'success'}), {
               headers: {'Content-Type': 'application/json'},
@@ -281,10 +275,10 @@ self.addEventListener('fetch', (event) => {
             });
           }
           if (eventRequest.url.indexOf('get-posts') > -1) {
-            const response = await handleGetPostsRequest(eventRequest);
+            const response = await GetPRequest(eventRequest);
             return Promise.resolve(response);
           } if (eventRequest.url.indexOf('sighting-detail') > -1) {
-            const response = await handleGetSightingDetailRequest(eventRequest);
+            const response = await GetDetail(eventRequest);
             return Promise.resolve(response);
           }
           return caches.open(cacheName)
@@ -310,7 +304,7 @@ self.addEventListener('fetch', (event) => {
 // 1. Checks if the 'SyncManager' is supported in the current environment.
 // 2. If supported, it uses the `register()` method of the `self.registration.sync` object to register the sync event with the provided tag.
 // 3. Returns a promise that resolves with the result of the registration if successful or rejects with an error if sync events are not supported.
-function registerSyncEvent(tag) {
+function regiSync(tag) {
   if ('SyncManager' in self) {
     return self.registration.sync.register(tag);
   }
@@ -318,22 +312,22 @@ function registerSyncEvent(tag) {
 }
 
 const handleUpgrade = () => {
-  console.log('indexedDB upgraded');
+  console.log('DB upgraded');
 };
 
 // handle success event on indexedDB connection
 const handleSuccess = () => {
-  console.log('indexedDB connection successful');
+  console.log('DB connected');
 };
 
 const handleError = () => {
-  console.log('indexedDB connection failed');
+  console.log('indexedDB failed');
 };
 
 // Open a connection to an IndexedDB database called "birdSightingAppDB" with version number 1
-const requestIDB = (() => {
+const reIndexDB = (() => {
   const birdSightingAppDB = indexedDB.open('bird-sighting-app-DB', 1);
-  console.log('indexedDB launched');
+  console.log('indexedDB got it');
   // Attach event listeners to the IndexedDB open request to handle the upgrade, success, and error events
   birdSightingAppDB.addEventListener('upgradeneeded', handleUpgrade);
   birdSightingAppDB.addEventListener('success', handleSuccess);
@@ -355,13 +349,13 @@ const requestIDB = (() => {
 // 4. If true, it retrieves the corresponding post from the indexedDB, constructs the data body, and sends a POST request to '/update-id' endpoint.
 //    - If the response status is 200, it deletes the post from the indexedDB.
 self.addEventListener('sync', (event) => {
-  if (event.tag.indexOf('insert-post-sync') > -1) {
+  if (event.tag.indexOf('upload-sync') > -1) {
     console.log("sync successfully 2.0")
-    const postInsertRequestDB = requestIDB.result;
-    const transaction = postInsertRequestDB.transaction(['postRequests'], 'readwrite');
-    const postRequestsStore = transaction.objectStore('postRequests');
+    const db = reIndexDB.result;
+    const transaction = db.transaction(['postRequests'], 'readwrite');
+    const store = transaction.objectStore('postRequests');
     const postKey = parseInt(event.tag.substring(event.tag.lastIndexOf('-') + 1), 10);
-    const postIdRequest = postRequestsStore.get(postKey);
+    const postIdRequest = store.get(postKey);
 
     postIdRequest.onsuccess = (evt) => {
       const post = evt.target.result;
@@ -383,9 +377,9 @@ self.addEventListener('sync', (event) => {
       }).then((response) => {
         console.log("sync successfully")
         if (response.status === 200) {
-          const transaction2 = postInsertRequestDB.transaction(['postRequests'], 'readwrite');
-          const postRequestsStore2 = transaction2.objectStore('postRequests');
-          postRequestsStore2.delete(post.id);
+          const transaction2 = db.transaction(['postRequests'], 'readwrite');
+          const store2 = transaction2.objectStore('postRequests');
+          store2.delete(post.id);
           return response.json();
         }
       }).catch((error) => {
@@ -395,11 +389,11 @@ self.addEventListener('sync', (event) => {
   }
   if (event.tag.indexOf('update-id-sync') > -1) {
     console.log("sync successfully 2.0");
-    const postInsertRequestDB = requestIDB.result;
-    const transaction = postInsertRequestDB.transaction(['user'], 'readwrite');
-    const postRequestsStore = transaction.objectStore('user');
+    const db = reIndexDB.result;
+    const transaction = db.transaction(['user'], 'readwrite');
+    const store = transaction.objectStore('user');
     const postKey = parseInt(event.tag.substring(event.tag.lastIndexOf('-') + 1), 10);
-    const postIdRequest = postRequestsStore.get(postKey);
+    const postIdRequest = store.get(postKey);
 
     postIdRequest.onsuccess = (evt) => {
       const post = evt.target.result;
@@ -418,7 +412,7 @@ self.addEventListener('sync', (event) => {
       }).then((response) => {
         console.log("sync successfully")
         if (response.status === 200) {
-          const transaction2 = postInsertRequestDB.transaction(['user'], 'readwrite');
+          const transaction2 = db.transaction(['user'], 'readwrite');
           const postRequestsStore2 = transaction2.objectStore('user');
           postRequestsStore2.delete(post.id);
           return response.json();
