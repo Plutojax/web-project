@@ -91,7 +91,7 @@ async function handleGetSightingDetailRequest(eventRequest) {
   const savedRequestsStore = transaction.objectStore('SavedPosts');
 
   const url = eventRequest.referrer;
-  const id = url.substring(url.indexOf('=') + 1);
+  const id = url.split('/').pop();
 
   let postDetail = null;
   if (id.includes('offid:')) {
@@ -281,16 +281,7 @@ const requestIDB = (() => {
   return birdSightingAppDB;
 })();
 
-/**
- * This function deletes a record from an indexedDB object store given the key.
- * It first obtains a reference to the object store, then calls the delete() method with the key to remove the record from the store.
- * */
-function deleteRecordFromIndexDB(objectStore, key) {
-  const postInsertRequestDB = requestIDB.result;
-  const transaction = postInsertRequestDB.transaction([objectStore, 'readwrite']);
-  const postRequestsStore = transaction.objectStore(objectStore);
-  postRequestsStore.delete(key);
-}
+
 
 /**
  * This code handles the 'sync' event which is triggered when the user regains internet connectivity after going offline.
