@@ -15,6 +15,7 @@ if ('serviceWorker' in navigator) {
 const handleUpgrade = (event) => {
     const db = event.target.result;
     db.createObjectStore('postRequests', { keyPath: 'id', autoIncrement: true });
+    db.createObjectStore('user', { keyPath: 'id', autoIncrement: true });
     const savedPostObjectStore = db.createObjectStore('SavedPosts', { keyPath: 'id', autoIncrement: true });
     savedPostObjectStore.createIndex('_id', '_id');
 };
