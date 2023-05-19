@@ -3,7 +3,7 @@ if ('serviceWorker' in navigator) {
 }
 
 
-/*
+/**
 * Handle the upgrade event for the indexedDB database.
 * Creates object stores for the postRequests and SavedPosts,
 * with keyPath 'id' and autoIncrement set to true.
@@ -11,7 +11,6 @@ if ('serviceWorker' in navigator) {
 * This index will help in getting filtered data based on _id as key
 * @param {Event} event - The upgrade event object.
 * */
-
 const handleUpgrade = (event) => {
     const db = event.target.result;
     db.createObjectStore('postRequests', { keyPath: 'id', autoIncrement: true });
@@ -61,7 +60,6 @@ async function savePostsToIndexedDB(posts) {
         const simplifiedPosts = posts.slice(0, 5).map(({ _id, image,Identification,Description,DateSeen,location }) => ({ _id, image,Identification,Description,DateSeen,location  }));
         console.log("save to POst",simplifiedPosts);
         // save the new array of objects to indexedDB
-        // eslint-disable-next-line no-use-before-define
         const db = requestIDB.result;
         const transaction = db.transaction(['SavedPosts'], 'readwrite');
         const savedPostsStore = transaction.objectStore('SavedPosts');

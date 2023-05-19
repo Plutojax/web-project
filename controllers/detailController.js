@@ -2,6 +2,14 @@ const express = require('express');
 const router = express.Router();
 const Sighting = require('../model/Sighting');
 
+/**
+ * GET route for retrieving a specific sighting by id.
+ * Sends back the retrieved sighting.
+ * @name get/sighting-location/:sightingId
+ * @param {string} req.params.sightingId - The id of the sighting to retrieve.
+ * @return {object} sighting - The sighting retrieved from the database.
+ * @throws {Error} If there is an error, it will be passed to the next error middleware.
+ */
 router.get('/sighting-location/:sightingId', async (req, res, next) => {
     // Extract the `sightingId` from the request parameters
     const sightingId = req.params.sightingId;
@@ -11,6 +19,14 @@ router.get('/sighting-location/:sightingId', async (req, res, next) => {
     res.send(sighting);
 });
 
+/**
+ * GET route for retrieving sighting details and related bird information from DBpedia by id.
+ * Renders a detail view of the sighting and bird information.
+ * @name get/sightingDetail/:sightingId
+ * @param {string} req.params.sightingId - The id of the sighting to retrieve.
+ * @return {object} Renders the sighting detail view with the sighting and bird information.
+ * @throws {Error} Will send 404 if sighting is not found or pass error to the next error middleware.
+ */
 router.get('/sightingDetail/:sightingId', async (req, res, next) => {
     try {
         const sightingId = req.params.sightingId;

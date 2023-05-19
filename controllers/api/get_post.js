@@ -1,5 +1,13 @@
 /**
- * Fetch all sighting record details from MongoDB.
+ * An asynchronous function that fetch all sighting record details from MongoDB.
+ * It returns the data as JSON, or sends a 500 response with an error message if there's an issue.
+ *  * @function
+ *  * @async
+ *  * @module Sighting
+ *  * @param {object} req - The express request object.
+ *  * @param {object} res - The express response object.
+ *  * @returns {object} res - The express response object. Sends a 200 status code and a JSON object containing the posts, or a 500 status code and a JSON object with an error message.
+ *  * @throws {Error} Will throw an error if there's an issue with the database retrieval.
  * */
 const Sighting = require('../../model/Sighting');
 

@@ -1,5 +1,10 @@
 /**
  * Controller function for inserting a sighting into MongoDB.
+ * @function
+ *  * @param {object} req - The express request object, which should include an object body with properties for 'image', 'Identification', 'Description', 'DateSeen', 'location', 'latitude', and 'longitude'.
+ *  * @param {object} res - The express response object.
+ *  * @throws {Error} Will redirect to an '/error' route if there's an issue with saving the post.
+ *  * @returns {object} res - The express response object. Redirects to a '/success' route after successfully saving the post.
  */
 const SightingPost = require('../../model/Sighting');
 

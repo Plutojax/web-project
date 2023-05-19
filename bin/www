@@ -1,6 +1,18 @@
 #!/usr/bin/env node
 
 /**
+ * This script configures and starts the HTTP server for the application.
+ *
+ * It imports the necessary modules, sets up the port and HTTP server,
+ * starts the server listening on the specified port, and handles any errors
+ * that occur during server startup. It also sets up a Socket.io instance
+ * on the server for real-time communication.
+ *
+ * @module server
+ */
+
+
+/**
  * Module dependencies.
  */
 
@@ -95,5 +107,5 @@ function onListening() {
 const io = require('socket.io')(server,{
   pingTimeout:60000,
 });
-var socket_module=require('../controllers/socket.js');
+var socket_module=require('../public/javascripts/socket.js');
 socket_module.init(io,app);

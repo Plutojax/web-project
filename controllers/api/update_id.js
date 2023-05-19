@@ -1,4 +1,9 @@
 const SightingPost = require("../../model/Sighting");
+
+// This function handles updating the identification field of a SightingPost object.
+// It receives a request containing the new identification data and the post ID to be updated.
+// After finding the post, it updates the identification field with the new value and saves the changes.
+// Finally, it redirects the user to a success page or an error page, depending on the outcome.
 const updateId = (req, res) => {
     const { Identification, _id } = req.body;
 

@@ -12,12 +12,7 @@ const assets = [
 ];
 
 /**
- * This code registers a service worker and caches the assets defined in the assets array using the cacheName.
- * The waitUntil method ensures that the installation process does not finish until the caching is complete.
- * The caches.open() method returns a promise that resolves to a cache object.
- * Then the cache.addAll() method is called to add all the assets to the cache.
- * If there is an error in the caching process, it is caught and logged to the console.
- * Once the assets are cached successfully, a success message is logged to the console.
+ * installation event: it adds all the files to be cached
  */
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -35,11 +30,8 @@ self.addEventListener('install', (event) => {
 });
 
 /**
-* This code registers an event listener for 'activate' events on the Service Worker.
-* It removes all caches that are not the current cacheName by iterating through all the caches keys,
-* and deleting the ones that do not match the current cacheName.
-* */
-// service worker "activate" event listener
+ * activation of service worker: it removes all cashed files if necessary
+ */
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
@@ -49,15 +41,9 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-/**
- * A function that retrieves data from an object store in indexedDB using either the getAll or get method,
- * depending on the parameters passed to it.
- * @param {IDBObjectStore} store - The object store from which to retrieve data.
- * @param {string} method - The method to use for retrieving data, either 'getAll' or 'get'.
- * @param {number|string} id - The ID of the data to retrieve. Required if method is 'get'.
- * @param {string} index - The index to use for retrieving data. Required if method is 'get' and the data is indexed.
- * @returns {Promise} - A promise that resolves with the retrieved data or rejects with an error.
- * */
+// This function retrieves data from a specified store in an indexedDB database.
+// It takes in the store object, a method name, an optional ID, and an optional index.
+// Returns a promise that resolves with the retrieved data or rejects with an error.
 function getFromStore(store, method, id, index) {
   return new Promise((resolve, reject) => {
     let request;
@@ -77,13 +63,20 @@ function getFromStore(store, method, id, index) {
   });
 }
 
-/**
- * This function handles the GET request for the sighting detail and returns the data associated with the post ID.
- * It first gets the ID from the URL, and then retrieves the post detail from the appropriate object store in IndexedDB,
- * depending on whether the post is saved or it was newly created while offline.
- * @param {Request} eventRequest - The Request object representing the incoming request.
- * @returns {Response} - The Response object containing the post detail data as JSON.
- * */
+// This asynchronous function handles a request to retrieve a specific sighting detail.
+// It receives an eventRequest object as a parameter.
+// The function performs the following steps:
+// 1. Retrieves the indexedDB database instance from the global `requestIDB` object.
+// 2. Starts a read-write transaction on the 'postRequests' and 'SavedPosts' object stores.
+// 3. Retrieves the object stores from the transaction.
+// 4. Extracts the URL from the eventRequest referrer.
+// 5. Parses the ID from the URL by splitting the URL and taking the last segment.
+// 6. Based on the ID, it determines whether the request is for a post request or a saved request.
+// 7. If the ID includes 'offid:', it removes the prefix and converts it to an integer postId.
+//    Then, it uses the getFromStore function to retrieve the post detail from the 'postRequests' store.
+// 8. If the ID does not include 'offid:', it directly uses the getFromStore function to retrieve the post detail
+//    from the 'SavedPosts' store, using the ID and the '_id' index.
+// 9. Returns a response containing the retrieved post detail as a JSON string.
 async function handleGetSightingDetailRequest(eventRequest) {
   const db = requestIDB.result;
   const transaction = db.transaction(['postRequests', 'SavedPosts'], 'readwrite');
@@ -106,14 +99,18 @@ async function handleGetSightingDetailRequest(eventRequest) {
   });
 }
 
-/**
- * This function is responsible for handling the request to retrieve all the posts.
- * It first opens the indexedDB database and creates a transaction to access the 'postRequests'
- * and 'SavedPosts' object stores.
- * Then, it retrieves all the saved posts and new offline posts from these object stores.
- * It concatenates these posts and maps them to a new array with each post containing an '_id' and 'image' property.
- * Finally, it returns a Response object with the array of posts as a JSON string and a 'Content-Type' header of 'application/json'.
- * */
+// This asynchronous function handles a request to retrieve all posts.
+// It receives an eventRequest object as a parameter.
+// The function performs the following steps:
+// 1. Retrieves the indexedDB database instance from the global `requestIDB` object.
+// 2. Starts a read-write transaction on the 'postRequests' and 'SavedPosts' object stores.
+// 3. Retrieves the object stores from the transaction.
+// 4. Uses the getFromStore function to asynchronously retrieve all saved posts and new offline posts.
+// 5. Consolidates the retrieved saved posts and new offline posts into a single array called 'sightings'.
+// 6. Maps each post in the 'sightings' array to a new object with selected properties, including '_id',
+//    'image', 'Identification', 'Description', 'DateSeen', and 'location'.
+// 7. Returns a response containing the 'sightings' array as a JSON string.
+//    The response has the 'Content-Type' header set to 'application/json'.
 async function handleGetPostsRequest(eventRequest) {
   const db = requestIDB.result;
   const transaction = db.transaction(['postRequests', 'SavedPosts'], 'readwrite');
@@ -140,13 +137,18 @@ async function handleGetPostsRequest(eventRequest) {
   });
 }
 
-/**
- * This function saves a new post request into IndexedDB.
- * It first gets the request body from the passed request object,
- * opens a transaction on the "postRequests" object store of IndexedDB,
- * and then adds the request body to the object store using the add() method.
- * It returns a promise that resolves with the result of the add() method.
- * */
+// This asynchronous function saves a request body to the 'postRequests' object store in indexedDB.
+// It receives a request object as a parameter.
+// The function performs the following steps:
+// 1. Parses the request body from the provided request object by calling the `json()` method.
+// 2. Retrieves the indexedDB database instance from the global `requestIDB` object.
+// 3. Starts a read-write transaction on the 'postRequests' object store.
+// 4. Retrieves the object store from the transaction.
+// 5. Adds the parsed request body to the 'postRequests' store by calling the `add()` method.
+// 6. Returns a promise that resolves when the addition is successful or rejects if an error occurs.
+//    The promise handles the `onsuccess` and `onerror` events of the `addRequest`.
+//    On success, it resolves with the result of the `addRequest`.
+//    On error, it logs an error message and rejects with the corresponding error.
 async function saveRequestToIndexedDB(request) {
   const requestBody = await request.json();
   const postInsertRequestDB = requestIDB.result;
@@ -167,6 +169,34 @@ async function saveRequestToIndexedDB(request) {
 
   return addRequest.result;
 }
+
+
+// This asynchronous function saves a request body to the 'user' object store in indexedDB.
+// It receives a request object as a parameter.
+// The function performs the following steps:
+// 1. Parses the request body from the provided request object by calling the `json()` method.
+// 2. Retrieves the indexedDB database instance from the global `requestIDB` object.
+// 3. Starts a read-write transaction on the 'user' object store.
+// 4. Retrieves the object store from the transaction.
+// 5. Adds the parsed request body to the 'user' store by calling the `add()` method.
+// 6. Returns a promise that resolves when the addition is successful or rejects if an error occurs.
+//    The promise handles the `onsuccess` and `onerror` events of the `addRequest`.
+//    On success, it resolves with the result of the `addRequest`.
+//    On error, it logs an error message and rejects with the corresponding error.
+
+
+// This asynchronous function saves a request body to the 'user' object store in indexedDB.
+// It receives a request object as a parameter.
+// The function performs the following steps:
+// 1. Parses the request body from the provided request object by calling the `json()` method.
+// 2. Retrieves the indexedDB database instance from the global `requestIDB` object.
+// 3. Starts a read-write transaction on the 'user' object store.
+// 4. Retrieves the object store from the transaction.
+// 5. Adds the parsed request body to the 'user' store by calling the `add()` method.
+// 6. Returns a promise that resolves when the addition is successful or rejects if an error occurs.
+//    The promise handles the `onsuccess` and `onerror` events of the `addRequest`.
+//    On success, it resolves with the result of the `addRequest`.
+//    On error, it logs an error message and rejects with the corresponding error.
 async function saveIdToIndexedDB(request) {
   const requestBody = await request.json();
   const postInsertRequestDB = requestIDB.result;
@@ -187,19 +217,30 @@ async function saveIdToIndexedDB(request) {
   return addRequest.result;
 }
 
-/**
- * This code implements a network first cache fallback approach for handling requests.
- * It listens to fetch events and attempts to fetch the resource from the network.
- * If the network fetch is successful, it is returned, otherwise it is fetched from the cache.
- * If the requested URL matches certain conditions, such as containing "insert-post", "get-posts", or "sighting-detail", different handling methods are employed.
- * The .then block is used for the network-first approach, while the .catch block is used for the cache fallback.
- * If the request fails to fetch from the network, it is handled by the .catch block.
- * In this block, if the URL contains "insert-post", the request is saved to IndexedDB and a sync event is registered.
- * If the URL contains "get-posts" or "sighting-detail", the request is handled by the respective functions.
- * If the request is not for "insert-post", "get-posts", or "sighting-detail", the response is fetched from the cache.
- * */
-// fetch event with traditional .then() chain implementation
-// fetch event listener
+// This event listener is responsible for intercepting and handling fetch requests made by the service worker.
+// It listens for the 'fetch' event and performs the following steps:
+// 1. Clones the original request using `clone()` method to ensure the event request is not modified.
+// 2. Uses `respondWith()` to override the default fetch behavior and provide a custom response.
+// 3. Makes a fetch request to the original event request using `fetch(event.request)`.
+// 4. Handles different scenarios based on the URL of the event request:
+//    - If the URL includes 'insert-post', it returns the network response without any modifications.
+//    - If the URL includes 'get-posts', it logs a message indicating fetching posts from MongoDB
+//      and returns the network response without any modifications.
+//    - If the URL includes 'sighting-detail', it returns the network response without any modifications.
+//    - If the URL includes 'update-id', it returns the network response without any modifications.
+//    - For other URLs, it caches the network response using the specified cache name.
+// 5. If an error occurs during the fetch request, it handles different scenarios based on the URL of the event request:
+//    - If the URL includes 'insert-post', it saves the request to the 'postRequests' object store in indexedDB,
+//      registers a sync event for later synchronization, and returns a JSON response with a success message.
+//    - If the URL includes 'update-id', it saves the request to the 'user' object store in indexedDB,
+//      registers a sync event for later synchronization, and returns a JSON response with a success message.
+//    - If the URL includes 'get-posts', it handles the request by calling the 'handleGetPostsRequest' function,
+//      which retrieves and returns the posts from the indexedDB and network.
+//    - If the URL includes 'sighting-detail', it handles the request by calling the 'handleGetSightingDetailRequest' function,
+//      which retrieves and returns the post detail from the indexedDB and network.
+//    - For other URLs, it attempts to fetch the response from the cache using the specified cache name.
+//      If a matching response is found, it returns the response; otherwise, it returns a response indicating
+//      that the network is unavailable.
 self.addEventListener('fetch', (event) => {
   const eventRequest = event.request.clone();
 
@@ -280,11 +321,12 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-/**
- * Registers a synchronization event with the given tag.
- * If the browser supports the SyncManager, it will return a promise that resolves when the synchronization event is registered.
- * Otherwise, it will return a rejected promise with an error message indicating that sync events are not supported.
- * */
+// This function is responsible for registering a sync event with a specified tag.
+// It receives a tag as a parameter.
+// The function performs the following steps:
+// 1. Checks if the 'SyncManager' is supported in the current environment.
+// 2. If supported, it uses the `register()` method of the `self.registration.sync` object to register the sync event with the provided tag.
+// 3. Returns a promise that resolves with the result of the registration if successful or rejects with an error if sync events are not supported.
 function registerSyncEvent(tag) {
   if ('SyncManager' in self) {
     return self.registration.sync.register(tag);
@@ -320,11 +362,15 @@ const requestIDB = (() => {
 
 
 
-/**
- * This code handles the 'sync' event which is triggered when the user regains internet connectivity after going offline.
- * If the event tag includes 'insert-post-sync', it retrieves the post from IndexedDB and sends a POST request to the server to insert the post data.
- * If the server response has a status of 200, the post is deleted from IndexedDB.
- * */
+// This event listener is responsible for handling sync events triggered by the browser.
+// It listens for the 'sync' event and performs specific actions based on the event tag.
+// The function performs the following steps:
+// 1. Checks if the event tag contains 'insert-post-sync'.
+// 2. If true, it retrieves the corresponding post from the indexedDB, constructs the data body, and sends a POST request to '/insert-post' endpoint.
+//    - If the response status is 200, it deletes the post from the indexedDB.
+// 3. Checks if the event tag contains 'update-id-sync'.
+// 4. If true, it retrieves the corresponding post from the indexedDB, constructs the data body, and sends a POST request to '/update-id' endpoint.
+//    - If the response status is 200, it deletes the post from the indexedDB.
 self.addEventListener('sync', (event) => {
   if (event.tag.indexOf('insert-post-sync') > -1) {
     console.log("sync successfully 2.0")
