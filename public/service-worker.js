@@ -207,7 +207,6 @@ self.addEventListener('fetch', (event) => {
       })
         .catch(async () => {
           if (eventRequest.url.indexOf('insert-post') > -1) {
-            console.log("offline start?????");
             const postIndexedDBID = await saveRequestToIndexedDB(eventRequest);
             registerSyncEvent(`insert-post-sync-${postIndexedDBID}`)
                 .then(() => {
@@ -221,7 +220,6 @@ self.addEventListener('fetch', (event) => {
               status: 200,
             });
           } if (eventRequest.url.indexOf('get-posts') > -1) {
-            console.log("back ot online????")
             const response = await handleGetPostsRequest(eventRequest);
             return Promise.resolve(response);
           } if (eventRequest.url.indexOf('sighting-detail') > -1) {
