@@ -50,16 +50,16 @@ router.get('/sightingDetail/:sightingId', async (req, res, next) => {
                         // The results are in the 'data' object
                         var binding = data.results.bindings;
                         if (binding.length>0)
-                            res.render('sightingDetail',{birdname:binding[0].name.value,abstracts:binding[0].abstract.value,link:binding[0].Animal.value})
+                            res.render('sightingDetail',{sightingId:sightingId,birdname:binding[0].name.value,abstracts:binding[0].abstract.value,link:binding[0].Animal.value})
                         else
                         {
-                            res.render('sightingDetail',{birdname:"Sorry",abstracts:"did not find any bird via identification",link:"error!!"})
+                            res.render('sightingDetail',{sightingId:sightingId,birdname:"Sorry",abstracts:"did not find any bird via identification",link:"error!!"})
                         }
                     });
             }
             else
             {
-                res.render('sightingDetail',{birdname:"Sorry",abstracts:"No identification of this sighting",link:"error!!"})
+                res.render('sightingDetail',{sightingId:sightingId,birdname:"Sorry",abstracts:"No identification of this sighting",link:"error!!"})
             }
 
             // res.render('sightingDetail', { sighting:sighting,username:coo });

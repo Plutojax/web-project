@@ -15,6 +15,7 @@
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="/javascripts/detail.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/4.0.0/ekko-lightbox.min.css"
           integrity="sha512-vC3vvXGPI9bplTilrP7d0YKtmHrMAH4q9dF6QSfIL/uOFIMsHu2wkmAITtFRkNisTKt1e4EAhIiXpyXJgiJW4Q=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
@@ -178,8 +179,8 @@
             <div class="col-4">
                 <div class="card mb-3">
                     <!--          https://via.placeholder.com/300x200-->
-                    <a data-toggle="lightbox">
-                        <img src=<%=sighting.image%> class="card-img-top" alt="..." onload="DrawImage(this)">
+                    <a \\ data-toggle="lightbox">
+                        <img  src='' id="lightbox-image" class="card-img-top" alt="..." onload="DrawImage(this)">
                     </a>
                 </div>
             </div>
@@ -190,8 +191,36 @@
                 <div class="card mb-3">
                     <div class="card-body">
                         <div style="width: 100%;float: right;padding-right: 5%">
-                            <p> <%-sighting.location%></p>
+                            <p id="sighting-location"></p>
                             <div style="height: 200px;width: 100%" id="map"></div>
+                            <script>
+                                $.ajax({
+                                    type: 'GET',
+                                    url: 'http://localhost:3000/sighting-location/<%= sightingId %>',
+                                    success(res){
+                                        console.log(res)
+                                        window.initMap(res.longitude,res.latitude)
+                                    },
+                                    error(error){
+                                        alert('error:'+error)
+                                    }
+                                })
+                                function initMap(longitude, latitude) {
+                                    // The location of Uluru
+                                    const uluru = { lat: latitude, lng: longitude };
+                                    // The map, centered at Uluru
+                                    const map = new google.maps.Map(document.getElementById("map"), {
+                                        zoom: 12,
+                                        center: uluru,
+                                    });
+                                    // The marker, positioned at Uluru
+                                    const marker = new google.maps.Marker({
+                                        position: uluru,
+                                        map: map,
+                                    });
+                                }
+
+                            </script>
                         </div>
                     </div>
                 </div>
@@ -201,15 +230,14 @@
                         <hr style="border-top: 1px solid #000; width: 100%;" class="mb-4">
 
                         <label for="sighting-identification"><strong>Identification:</strong></label>
-                        <textarea class="form-control" id="sighting-identification" rows="1"><%= sighting.Identification %></textarea>
+                        <textarea class="form-control" id="sighting-identification" rows="1"></textarea>
                         <div style="width: 100%; height: 300px; overflow-y: auto;">
                             <p class="card-text" id="scientific-name"><strong>Common name/scientific name:</strong> <%= birdname %></p>
                             <p class="card-text" id="abstracts"><strong>Abstracts:</strong> <%= abstracts %></p>
                             <p class="card-text" id="link"><strong>DBPedia Link:</strong> <a href=<%= link %>><%= link; %></a></p>
                         </div>
-                        <p class="card-text" id="sighting-description"><strong>Description:</strong><%= sighting.Description %></p>
-                        <p class="card-text" id="Date Seen"><strong>Date Seen:</strong> <%= new Date(sighting.DateSeen).toISOString() %> </p>
-                        <p class="card-text" id="uploaded-by"><strong>Uploaded-by:</strong><%= sighting.username %></p>
+                        <p class="card-text" id="sighting-description"><strong>Description:</strong></p>
+                        <p class="card-text" id="Date Seen"><strong>Date Seen:</strong>  </p>
                         <div class="chat-container">
                             <div class="chat-box">
                                 <ul id="chat-messages" class="chat-messages"></ul>
@@ -265,7 +293,7 @@
             </div>
 
             <div class="">
-                    <button type="button" onclick="modifyIdentification()" class="btn btn-success btn-block mt-4"><i class="far fa-comment"></i> Modify identification</button>
+                    <button type="button" onclick="" class="btn btn-success btn-block mt-4"><i class="far fa-comment"></i> Modify identification</button>
             </div>
         </div>
     </div>
@@ -275,61 +303,7 @@
             defer
     ></script>
     <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
-<script>
-    async function modifyIdentification() {
-        const newIdentification = document.getElementById('sighting-identification').value;
-        console.log(newIdentification);
-        if (newIdentification.trim() === '') {
-            alert('Identification cannot be empty.');
-            return;
-        }
 
-        try {
-            const response = await axios.post('/updatedIdentification', {
-                sightingId: '<%= sighting._id %>',
-                newIdentification: newIdentification
-            });
 
-            if (response.status === 200) {
-                // document.getElementById('sighting-identification').value = response.data.updatedIdentification;
-                location.reload();
-                alert('Identification updated successfully.');
-            } else {
-                location.reload();
-                throw new Error('Failed to update identification.');
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
-</script>
-    <script>
-        $.ajax({
-            type: 'GET',
-            url: 'http://localhost:3000/sighting-location/'+<%-JSON.stringify(sighting)%>._id,
-            success(res){
-                console.log(res)
-                window.initMap(res.longitude,res.latitude)
-            },
-            error(error){
-                alert('error:'+error)
-            }
-        })
-        function initMap(longitude, latitude) {
-            // The location of Uluru
-            const uluru = { lat: latitude, lng: longitude };
-            // The map, centered at Uluru
-            const map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 12,
-                center: uluru,
-            });
-            // The marker, positioned at Uluru
-            const marker = new google.maps.Marker({
-                position: uluru,
-                map: map,
-            });
-        }
-
-    </script>
 </body>
 </html>

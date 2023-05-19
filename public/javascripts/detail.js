@@ -44,5 +44,9 @@ fetch('/sighting-detail', {
         post = postData;
         console.log("detail post",post);
         document.getElementById('sighting-identification').innerHTML = postData.Identification;
+        document.getElementById('sighting-description').innerHTML=`<strong>Description: </strong>${postData.Description}`;
+        document.getElementById('Date Seen').innerHTML=`<strong>Date Seen: </strong>${new Date(postData.DateSeen).toISOString()}`;
+        document.getElementById('sighting-location').innerHTML=postData.location;
+        document.getElementById('lightbox-image').src=postData.image;
     })
     .catch((err) => console.error(err));

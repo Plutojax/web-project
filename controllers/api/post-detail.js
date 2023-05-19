@@ -5,8 +5,8 @@ const Sighting = require('../../model/Sighting');
 
 const getPostRecords = async (req, res) => {
     try {
-        const { id } = req.body;
-        const queryResult = await Sighting.findById(id);
+        const { postId } = req.body;
+        const queryResult = await Sighting.findById(postId);
         console.log('post details');
         res.status(200).json(queryResult);
     } catch (error) {
