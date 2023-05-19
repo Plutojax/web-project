@@ -131,7 +131,7 @@ async function handleGetPostsRequest(eventRequest) {
     image: post.image,
     Identification:post.Identification,
     Description:post.Description,
-    DataSeen:post.DataSeen,
+    DateSeen:post.DataSeen,
     location:post.location
   }));
 
