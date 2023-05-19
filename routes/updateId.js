@@ -1,5 +1,5 @@
 /**
- * The insertSightingRow function from insert_form_controller module is specified for this route.
+ * The updateID function from update_id module is specified for this route.
  * */
 const express = require('express');
 

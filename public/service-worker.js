@@ -326,7 +326,7 @@ const handleError = () => {
 
 // Open a connection to an IndexedDB database called "birdSightingAppDB" with version number 1
 const reIndexDB = (() => {
-  const birdSightingAppDB = indexedDB.open('bird-sighting-app-DB', 1);
+  const birdSightingAppDB = indexedDB.open('bird-sighting', 1);
   console.log('indexedDB got it');
   // Attach event listeners to the IndexedDB open request to handle the upgrade, success, and error events
   birdSightingAppDB.addEventListener('upgradeneeded', handleUpgrade);
@@ -418,7 +418,7 @@ self.addEventListener('sync', (event) => {
           return response.json();
         }
       }).catch((error) => {
-        console.log('Error occurred while update id', error);
+        console.log('Error occurred', error);
       });
     };
   }

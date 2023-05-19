@@ -4,7 +4,7 @@
 const express = require('express');
 
 const router = express.Router();
-const { insertSightingRow } = require('../controllers/api/insert_form_controller');
+const { UploadSighting } = require('../controllers/api/insert_form_controller');
 
-router.post('/', insertSightingRow);
+router.post('/', UploadSighting);
 module.exports = router;

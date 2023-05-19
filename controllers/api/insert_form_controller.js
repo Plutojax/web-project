@@ -8,7 +8,7 @@
  */
 const SightingPost = require('../../model/Sighting');
 
-const insertSightingRow = (req, res) => {
+const UploadSighting = (req, res) => {
     console.log('Reaching insertSightingRow in controllers/api');
     console.log("req",req.body);
     const {
@@ -35,4 +35,4 @@ const insertSightingRow = (req, res) => {
         });
 };
 
-module.exports = { insertSightingRow };
+module.exports = {UploadSighting};
