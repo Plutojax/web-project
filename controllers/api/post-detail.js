@@ -1,17 +1,17 @@
 /**
- * Retrieves the details of a post specified by the postId and sends it as a response in JSON format.
+ * Fetch document from MongoDB by id and transfer into a json file.
  * */
 const Sighting = require('../../model/Sighting');
 
-const getPostDetails = async (req, res) => {
+const getPostRecords = async (req, res) => {
     try {
-        const { postId } = req.body;
-        const postDetails = await Sighting.findById(postId);
+        const { id } = req.body;
+        const queryResult = await Sighting.findById(id);
         console.log('post details');
-        res.status(200).json(postDetails);
+        res.status(200).json(queryResult);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-module.exports = { getPostDetails };
+module.exports = { getPostRecords };

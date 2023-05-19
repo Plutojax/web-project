@@ -17,7 +17,6 @@ const assets = [
  * If there is an error in the caching process, it is caught and logged to the console.
  * Once the assets are cached successfully, a success message is logged to the console.
  */
-// eslint-disable-next-line no-restricted-globals
 self.addEventListener('install', (event) => {
   event.waitUntil(
       caches.open(cacheName)
@@ -39,7 +38,6 @@ self.addEventListener('install', (event) => {
 * and deleting the ones that do not match the current cacheName.
 * */
 // service worker "activate" event listener
-// eslint-disable-next-line no-restricted-globals
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
@@ -65,7 +63,6 @@ function getFromStore(store, method, id, index) {
       request = store.getAll();
     } else if (method === 'get') {
       if (index) {
-        // eslint-disable-next-line no-underscore-dangle
         const _idIndex = store.index(index);
         request = _idIndex.get(id);
       } else {
@@ -116,7 +113,6 @@ async function handleGetSightingDetailRequest(eventRequest) {
  * Finally, it returns a Response object with the array of posts as a JSON string and a 'Content-Type' header of 'application/json'.
  * */
 async function handleGetPostsRequest(eventRequest) {
-  // eslint-disable-next-line no-use-before-define
   const db = requestIDB.result;
   const transaction = db.transaction(['postRequests', 'SavedPosts'], 'readwrite');
   const postRequestsStore = transaction.objectStore('postRequests');
@@ -148,7 +144,6 @@ async function handleGetPostsRequest(eventRequest) {
  * */
 async function saveRequestToIndexedDB(request) {
   const requestBody = await request.json();
-  // eslint-disable-next-line no-use-before-define
   const postInsertRequestDB = requestIDB.result;
   const transaction = postInsertRequestDB.transaction(['postRequests'], 'readwrite');
   const postRequestsStore = transaction.objectStore('postRequests');
@@ -180,9 +175,7 @@ async function saveRequestToIndexedDB(request) {
  * If the request is not for "insert-post", "get-posts", or "sighting-detail", the response is fetched from the cache.
  * */
 // fetch event with traditional .then() chain implementation
-// eslint-disable-next-line no-restricted-globals
 // fetch event listener
-// eslint-disable-next-line no-restricted-globals
 self.addEventListener('fetch', (event) => {
   const eventRequest = event.request.clone();
 
@@ -206,40 +199,43 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         });
       })
-      .catch(async () => {
-        if (eventRequest.url.indexOf('insert-post') > -1) {
-          const postIndexedDBID = await saveRequestToIndexedDB(eventRequest);
-          // eslint-disable-next-line no-use-before-define
-          registerSyncEvent(`insert-post-sync-${postIndexedDBID}`)
-            .then(() => {
-              console.log('sync event registered successfully');
-            })
-            .catch((error) => {
-              console.log('sync event registration failed: ', error);
+        .catch(async () => {
+          if (eventRequest.url.indexOf('insert-post') > -1) {
+            console.log("offline start?????");
+            const postIndexedDBID = await saveRequestToIndexedDB(eventRequest);
+            registerSyncEvent(`insert-post-sync-${postIndexedDBID}`)
+                .then(() => {
+                  console.log('sync event registered successfully');
+                })
+                .catch((error) => {
+                  console.log('sync event registration failed: ', error);
+                });
+            return new Response(JSON.stringify({ message: 'success' }), {
+              headers: { 'Content-Type': 'application/json' },
+              status: 200,
             });
-          return new Response(JSON.stringify({ message: 'success' }), {
-            headers: { 'Content-Type': 'application/json' },
-            status: 200,
-          });
-        } if (eventRequest.url.indexOf('get-posts') > -1) {
-          const response = await handleGetPostsRequest(eventRequest);
-          console.log("get post from index DB");
-          return Promise.resolve(response);
-        } if (eventRequest.url.indexOf('sighting-detail') > -1) {
-          const response = await handleGetSightingDetailRequest(eventRequest);
-          return Promise.resolve(response);
-        }
-        return caches.open(cacheName)
-          .then(async (cache) => {
-            return cache.match(eventRequest);
-          })
-          .then((response) => {
-            if (response) {
-              return response;
-            }
-            return new Response('Network unavailable', { status: 503 });
-          });
-      }),
+          } if (eventRequest.url.indexOf('get-posts') > -1) {
+            console.log("back ot online????")
+            const response = await handleGetPostsRequest(eventRequest);
+            return Promise.resolve(response);
+          } if (eventRequest.url.indexOf('sighting-detail') > -1) {
+            const response = await handleGetSightingDetailRequest(eventRequest);
+            return Promise.resolve(response);
+          }
+          return caches.open(cacheName)
+              .then(async (cache) => {
+                if (eventRequest.url.includes('/sighting/')) {
+                  return cache.match('/sighting/');
+                }
+                return cache.match(eventRequest);
+              })
+              .then((response) => {
+                if (response) {
+                  return response;
+                }
+                return new Response('Network unavailable', { status: 503 });
+              });
+        }),
   );
 });
 
@@ -272,7 +268,6 @@ const handleError = () => {
 const requestIDB = (() => {
   const birdSightingAppDB = indexedDB.open('bird-sighting-app-DB', 1);
   console.log('indexedDB launched');
-  // eslint-disable-next-line max-len
   // Attach event listeners to the IndexedDB open request to handle the upgrade, success, and error events
   birdSightingAppDB.addEventListener('upgradeneeded', handleUpgrade);
   birdSightingAppDB.addEventListener('success', handleSuccess);
@@ -298,10 +293,8 @@ function deleteRecordFromIndexDB(objectStore, key) {
  * If the event tag includes 'insert-post-sync', it retrieves the post from IndexedDB and sends a POST request to the server to insert the post data.
  * If the server response has a status of 200, the post is deleted from IndexedDB.
  * */
-// eslint-disable-next-line no-restricted-globals
 self.addEventListener('sync', (event) => {
   if (event.tag.indexOf('insert-post-sync') > -1) {
-    // eslint-disable-next-line no-debugger
     console.log("sync successfully 2.0")
     const postInsertRequestDB = requestIDB.result;
     const transaction = postInsertRequestDB.transaction(['postRequests'], 'readwrite');
@@ -326,7 +319,6 @@ self.addEventListener('sync', (event) => {
         method: 'POST',
         headers,
         body: JSON.stringify(dataBody),
-        // eslint-disable-next-line consistent-return
       }).then((response) => {
         console.log("sync successfully")
         if (response.status === 200) {

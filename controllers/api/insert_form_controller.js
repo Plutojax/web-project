@@ -1,10 +1,10 @@
 /**
- * Controller function for inserting a sighting post into the database.
+ * Controller function for inserting a sighting into MongoDB.
  */
 const SightingPost = require('../../model/Sighting');
 
-const insertSightingPost = (req, res) => {
-    console.log('Reaching till controller');
+const insertSightingRow = (req, res) => {
+    console.log('Reaching insertSightingRow in controllers/api');
     console.log("req",req.body);
     const {
         image, Identification,Description, DateSeen,location,latitude,longitude
@@ -30,4 +30,4 @@ const insertSightingPost = (req, res) => {
         });
 };
 
-module.exports = { insertSightingPost };
+module.exports = { insertSightingRow };
