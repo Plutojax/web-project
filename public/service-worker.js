@@ -5,7 +5,7 @@ const assets = [
     '/javascripts/detail.js',
     '/javascripts/jqthumb.js',
     '/stylesheets/style.css',
-    '/home',
+    '/',
     '/login',
     '/upload',
     '/sightingDetail/'
@@ -113,18 +113,15 @@ async function handleGetSightingDetailRequest(eventRequest) {
 //    The response has the 'Content-Type' header set to 'application/json'.
 async function handleGetPostsRequest(eventRequest) {
   const db = requestIDB.result;
-  const transaction = db.transaction(['postRequests', 'SavedPosts'], 'readwrite');
-  const postRequestsStore = transaction.objectStore('postRequests');
+  const transaction = db.transaction(['SavedPosts'], 'readwrite');
   const savedRequestsStore = transaction.objectStore('SavedPosts');
-  const [savedPosts, newOfflinePosts] = await Promise.all([
+  const [savedPosts] = await Promise.all([
     getFromStore(savedRequestsStore, 'getAll'),
-    getFromStore(postRequestsStore, 'getAll'),
   ]);
-  console.log('Saved Posts:', savedPosts);
-  console.log('New Offline Posts:', newOfflinePosts);
 
-  const sightings = [...savedPosts, ...newOfflinePosts].map((post) => ({
-    _id: post._id || `offid:${post.id}`,
+
+  const sightings = [...savedPosts].map((post) => ({
+    _id: post._id ,
     image: post.image,
     Identification:post.Identification,
     Description:post.Description,
